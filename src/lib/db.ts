@@ -192,3 +192,32 @@ export function findCustomDomainByDomain(domain: string) {
     }
     return cd
 }
+
+export function findCustomDomainByPage(pageId: string) {
+    const db = getDb()
+    return db.prepare('SELECT * FROM CustomDomain WHERE pageId = ?').get(pageId) as any
+}
+
+export function findCustomDomainsByUser(userId: string) {
+    const db = getDb()
+    return db.prepare(`
+        SELECT cd.*, p.title as pageTitle, p.slug as pageSlug 
+        FROM CustomDomain cd 
+        JOIN Page p ON cd.pageId = p.id 
+        WHERE p.userId = ?
+    `).all(userId) as any[]
+}
+
+export function createCustomDomain(pageId: string, domain: string) {
+    const db = getDb()
+    const id = uuidv4().replace(/-/g, '').slice(0, 25)
+    db.prepare('INSERT INTO CustomDomain (id, pageId, domain, isVerified) VALUES (?, ?, ?, ?)').run(
+        id, pageId, domain, 0
+    )
+    return { id, pageId, domain, isVerified: false }
+}
+
+export function deleteCustomDomain(id: string) {
+    const db = getDb()
+    db.prepare('DELETE FROM CustomDomain WHERE id = ?').run(id)
+}

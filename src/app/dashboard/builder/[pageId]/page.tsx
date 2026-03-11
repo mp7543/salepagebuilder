@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { ArrowLeft, Save, Eye, Palette, Type, Layout, Star, Image, MessageSquare, Phone, Award, BarChart3, Loader2, Globe, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Save, Eye, Palette, Type, Layout, Star, Image, MessageSquare, Phone, Award, BarChart3, Loader2, Globe, ChevronRight, Check, Home, Lock, Crown, Zap, ArrowRight, Menu, X, ChevronUp } from 'lucide-react'
 import { brandPresets, templateColorPresets } from '@/lib/presets/colors'
 import { financialPreset, realestatePreset, genericPreset } from '@/lib/presets/content'
 import { PageConfig, ColorTheme, TemplateType } from '@/lib/types'
@@ -11,10 +11,10 @@ import { ProfessionalTemplate } from '@/components/templates/professional'
 import { PremiumTemplate } from '@/components/templates/premium'
 import { MinimalTemplate } from '@/components/templates/minimal'
 
-const TEMPLATE_OPTIONS: { id: TemplateType; name: string; desc: string; icon: string }[] = [
-    { id: 'professional', name: 'Professional', desc: 'สไตล์ Karnwealth', icon: '🏢' },
-    { id: 'premium', name: 'Premium', desc: 'สไตล์ Apple', icon: '✨' },
-    { id: 'minimal', name: 'Minimal', desc: 'สะอาด เรียบง่าย', icon: '🍃' },
+const TEMPLATE_OPTIONS: { id: TemplateType; name: string; subtitle: string; themeLabel: string; themeColor: string; previewBg: string; previewAccent: string; icon: string }[] = [
+    { id: 'professional', name: 'นักวางแผนการเงิน', subtitle: 'Financial Planner', themeLabel: 'Emerald Green', themeColor: '#10b981', previewBg: '#ecfdf5', previewAccent: '#10b981', icon: '💰' },
+    { id: 'premium', name: 'นายหน้าอสังหาริมทรัพย์', subtitle: 'Real Estate Agent', themeLabel: 'Ocean Blue', themeColor: '#3b82f6', previewBg: '#eff6ff', previewAccent: '#3b82f6', icon: '🏠' },
+    { id: 'minimal', name: 'ฟรีแลนซ์ / ทั่วไป', subtitle: 'Freelancer / General', themeLabel: 'Pure White', themeColor: '#6366f1', previewBg: '#f5f3ff', previewAccent: '#6366f1', icon: '✏️' },
 ]
 
 const CONTENT_PRESETS = [
@@ -24,17 +24,115 @@ const CONTENT_PRESETS = [
 ]
 
 const SECTIONS = [
-    { id: 'template', name: 'เทมเพลท', icon: <Layout size={16} /> },
-    { id: 'colors', name: 'สีธีม', icon: <Palette size={16} /> },
-    { id: 'navbar', name: 'Navbar', icon: <Layout size={16} /> },
-    { id: 'hero', name: 'Hero', icon: <Star size={16} /> },
-    { id: 'stats', name: 'ตัวเลข', icon: <BarChart3 size={16} /> },
-    { id: 'values', name: 'คุณค่า', icon: <Award size={16} /> },
-    { id: 'services', name: 'บริการ', icon: <Type size={16} /> },
-    { id: 'testimonials', name: 'รีวิว', icon: <MessageSquare size={16} /> },
-    { id: 'cta', name: 'CTA', icon: <Eye size={16} /> },
-    { id: 'contact', name: 'ติดต่อ', icon: <Phone size={16} /> },
+    { id: 'hero', name: 'ส่วนหัว (Hero)', icon: <Home size={15} /> },
+    { id: 'navbar', name: 'Navbar', icon: <Layout size={15} /> },
+    { id: 'stats', name: 'ตัวเลข', icon: <BarChart3 size={15} /> },
+    { id: 'values', name: 'คุณค่า', icon: <Award size={15} /> },
+    { id: 'services', name: 'บริการ', icon: <Type size={15} /> },
+    { id: 'testimonials', name: 'รีวิว', icon: <MessageSquare size={15} /> },
+    { id: 'cta', name: 'CTA', icon: <Eye size={15} /> },
+    { id: 'contact', name: 'ติดต่อ', icon: <Phone size={15} /> },
+    { id: 'colors', name: 'สีธีม', icon: <Palette size={15} /> },
 ]
+
+/* ─── Mini template preview card ─── */
+function TemplatePreviewCard({ opt, isSelected, onSelect, locked }: {
+    opt: typeof TEMPLATE_OPTIONS[0]
+    isSelected: boolean
+    onSelect: () => void
+    locked?: boolean
+}) {
+    return (
+        <div
+            onClick={locked ? undefined : onSelect}
+            className={`rounded-2xl transition-all duration-200 overflow-hidden ${locked ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'} ${isSelected ? 'ring-2 ring-offset-2 ring-blue-500 shadow-xl' : locked ? '' : 'hover:shadow-lg hover:-translate-y-1'}`}
+            style={{ background: 'white', border: isSelected ? 'none' : '1px solid #e5e7eb', position: 'relative' }}
+        >
+            {locked && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(2px)' }}>
+                    <div className="flex flex-col items-center gap-2 text-center px-4">
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)' }}>
+                            <Lock size={20} className="text-purple-600" />
+                        </div>
+                        <span className="text-sm font-bold text-gray-700">Pro / Premium เท่านั้น</span>
+                        <span className="text-xs text-gray-500">อัพเกรดเพื่อใช้เทมเพลทนี้</span>
+                    </div>
+                </div>
+            )}
+            {/* Preview thumbnail */}
+            <div className="relative p-4 sm:p-5 pb-3" style={{ background: opt.previewBg, minHeight: 140 }}>
+                <div className="rounded-xl overflow-hidden shadow-sm" style={{ background: 'white', padding: '10px 12px' }}>
+                    <div className="h-2 rounded-full mb-2 w-3/4" style={{ background: opt.previewAccent }} />
+                    <div className="h-1.5 rounded-full mb-1.5 w-1/2" style={{ background: '#e5e7eb' }} />
+                    <div className="h-1.5 rounded-full mb-3 w-2/3" style={{ background: '#e5e7eb' }} />
+                    <div className="grid grid-cols-3 gap-1.5 mb-3">
+                        {[0, 1, 2].map(i => (
+                            <div key={i} className="h-7 sm:h-8 rounded-lg" style={{ background: `${opt.previewAccent}22` }} />
+                        ))}
+                    </div>
+                    <div className="h-6 sm:h-7 rounded-lg w-2/3" style={{ background: opt.previewAccent }} />
+                </div>
+                <div className="absolute top-3 right-3 text-2xl sm:text-3xl">{opt.icon}</div>
+            </div>
+
+            {/* Card info */}
+            <div className="p-4 sm:p-5 pt-3 sm:pt-4">
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <h3 className="font-bold text-gray-900 text-sm sm:text-base leading-snug">{opt.name}</h3>
+                    <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full shrink-0 font-medium" style={{ background: `${opt.themeColor}18`, color: opt.themeColor }}>
+                        {locked ? '🔒 Pro' : opt.themeLabel}
+                    </span>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">{opt.subtitle}</p>
+
+                <div className="flex items-center gap-1.5 mb-3 sm:mb-4">
+                    <span className="text-[10px] sm:text-xs text-gray-400">ธีมสีที่รองรับ:</span>
+                    {[opt.themeColor, '#f59e0b', '#3b82f6', '#ef4444', '#f97316', '#8b5cf6'].slice(0, 6).map((c, i) => (
+                        <div key={i} className="w-3.5 sm:w-4 h-3.5 sm:h-4 rounded-full border border-white shadow-sm" style={{ background: c }} />
+                    ))}
+                </div>
+
+                <button
+                    className={`w-full py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white transition-all ${locked ? 'opacity-50' : 'hover:opacity-90'}`}
+                    style={{ background: opt.themeColor }}
+                    onClick={locked ? undefined : onSelect}
+                    disabled={locked}
+                >
+                    {locked ? '🔒 อัพเกรดเพื่อใช้งาน' : 'เลือกเทมเพลทนี้ →'}
+                </button>
+            </div>
+        </div>
+    )
+}
+
+/* ─── Toast component ─── */
+function Toast({ message, type = 'success', onClose }: { message: string; type?: 'success' | 'error'; onClose: () => void }) {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 2500)
+        return () => clearTimeout(timer)
+    }, [onClose])
+
+    return (
+        <div className="toast">
+            {type === 'success' ? (
+                <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                    <Check size={11} className="text-green-400" />
+                </div>
+            ) : (
+                <div className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+                    <X size={11} className="text-red-400" />
+                </div>
+            )}
+            <span className="text-sm">{message}</span>
+        </div>
+    )
+}
+
+interface SubData {
+    tier: string
+    endDate: string
+    isActive: boolean
+}
 
 export default function BuilderPage() {
     const { data: session, status } = useSession()
@@ -45,19 +143,42 @@ export default function BuilderPage() {
     const [template, setTemplate] = useState<TemplateType>('professional')
     const [config, setConfig] = useState<PageConfig>(genericPreset as PageConfig)
     const [colorTheme, setColorTheme] = useState<ColorTheme>(templateColorPresets.professional[0])
-    const [activeSection, setActiveSection] = useState('template')
+    const [activeSection, setActiveSection] = useState('hero')
+    const [showTemplatePicker, setShowTemplatePicker] = useState(true)
     const [saving, setSaving] = useState(false)
     const [pageSlug, setPageSlug] = useState('')
     const [pageTitle, setPageTitle] = useState('')
     const [isPublished, setIsPublished] = useState(false)
-    const saveTimeoutRef = useRef<NodeJS.Timeout>()
+    const [subscription, setSubscription] = useState<SubData | null>(null)
+    const [showUpgradeHint, setShowUpgradeHint] = useState('')
+    const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const previewRef = useRef<HTMLDivElement>(null)
+
+    // Mobile-specific state
+    const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+    const [mobileSectionListOpen, setMobileSectionListOpen] = useState(false)
+    const [toastMsg, setToastMsg] = useState<string | null>(null)
+    const [toastType, setToastType] = useState<'success' | 'error'>('success')
+
+    // Tier helpers
+    const tier = (subscription?.tier || 'free') as 'free' | 'pro' | 'premium'
+    const daysLeft = tier === 'free' && subscription?.endDate
+        ? Math.max(0, Math.ceil((new Date(subscription.endDate).getTime() - Date.now()) / 86400000))
+        : null
+    const isExpired = tier === 'free' && daysLeft !== null && daysLeft <= 0
+    const canUseAllTemplates = tier === 'pro' || tier === 'premium'
+    const canUseBrandColors = tier === 'pro' || tier === 'premium'
+    const canUseContentPresets = tier === 'pro' || tier === 'premium'
 
     useEffect(() => {
         if (status === 'unauthenticated') router.push('/login')
     }, [status, router])
 
     useEffect(() => {
-        if (session && pageId) loadPage()
+        if (session && pageId) {
+            loadPage()
+            fetch('/api/subscription').then(r => r.ok ? r.json() : null).then(d => d && setSubscription(d)).catch(() => { })
+        }
     }, [session, pageId])
 
     const loadPage = async () => {
@@ -74,11 +195,16 @@ export default function BuilderPage() {
                     setIsPublished(page.isPublished)
                     try { setConfig({ ...genericPreset, ...JSON.parse(page.config) } as PageConfig) } catch { }
                     try { setColorTheme({ ...templateColorPresets.professional[0], ...JSON.parse(page.colorTheme) }) } catch { }
+                    if (page.config && page.config !== '{}') setShowTemplatePicker(false)
                 }
             }
             return
         }
-        // This path won't normally be reached since GET /api/pages/[id] isn't defined
+    }
+
+    const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+        setToastMsg(msg)
+        setToastType(type)
     }
 
     const autoSave = useCallback(() => {
@@ -91,6 +217,7 @@ export default function BuilderPage() {
                 body: JSON.stringify({ template, config, colorTheme, title: pageTitle, isPublished }),
             })
             setSaving(false)
+            showToast('บันทึกอัตโนมัติแล้ว ✓')
         }, 1500)
     }, [pageId, template, config, colorTheme, pageTitle, isPublished])
 
@@ -121,6 +248,7 @@ export default function BuilderPage() {
         })
         setIsPublished(true)
         setSaving(false)
+        showToast(isPublished ? 'บันทึกเรียบร้อย ✓' : 'เผยแพร่เรียบร้อย 🎉')
     }
 
     const applyContentPreset = (preset: Partial<PageConfig>) => {
@@ -141,79 +269,70 @@ export default function BuilderPage() {
         }
     }
 
+    /* shared light input style */
+    const inp = "w-full px-3 py-2.5 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+    const inpStyle = { background: '#f8fafc', border: '1px solid #e2e8f0' }
+
     const renderSectionEditor = () => {
         switch (activeSection) {
-            case 'template':
-                return (
-                    <div className="space-y-6">
-                        <div>
-                            <h3 className="text-sm font-semibold mb-3 text-[var(--muted)]">เลือกเทมเพลท</h3>
-                            <div className="space-y-2">
-                                {TEMPLATE_OPTIONS.map(t => (
-                                    <button key={t.id} onClick={() => { setTemplate(t.id); setColorTheme(templateColorPresets[t.id][0]) }}
-                                        className={`w-full p-4 rounded-xl text-left transition-all ${template === t.id ? 'bg-[var(--primary)]/20 border border-purple-500/50' : 'bg-white/5 border border-white/5 hover:border-white/10'}`}>
-                                        <span className="text-lg mr-2">{t.icon}</span>
-                                        <span className="font-medium">{t.name}</span>
-                                        <p className="text-xs text-[var(--muted)] mt-1 ml-7">{t.desc}</p>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div>
-                            <h3 className="text-sm font-semibold mb-3 text-[var(--muted)]">เลือก Preset เนื้อหา</h3>
-                            <div className="space-y-2">
-                                {CONTENT_PRESETS.map(p => (
-                                    <button key={p.id} onClick={() => applyContentPreset(p.preset)}
-                                        className="w-full p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 text-left transition-all">
-                                        <span className="mr-2">{p.icon}</span> {p.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )
             case 'colors':
                 return (
-                    <div className="space-y-6">
+                    <div className="space-y-5">
                         <div>
-                            <h3 className="text-sm font-semibold mb-3 text-[var(--muted)]">สีธีม</h3>
+                            <h3 className="text-xs font-semibold mb-2.5 text-gray-400 uppercase tracking-wider">ธีมสีเทมเพลท</h3>
                             <div className="grid grid-cols-2 gap-2">
                                 {templateColorPresets[template].map((c, i) => (
                                     <button key={i} onClick={() => setColorTheme(c)}
-                                        className={`p-3 rounded-xl border transition-all ${JSON.stringify(colorTheme) === JSON.stringify(c) ? 'border-purple-500' : 'border-white/5 hover:border-white/10'}`}>
-                                        <div className="flex gap-1 mb-2">
-                                            <div className="w-5 h-5 rounded-full" style={{ background: c.primary }} />
-                                            <div className="w-5 h-5 rounded-full" style={{ background: c.accent }} />
-                                            <div className="w-5 h-5 rounded-full" style={{ background: c.background }} />
+                                        className="p-2.5 rounded-xl text-left transition-all relative"
+                                        style={{ border: JSON.stringify(colorTheme) === JSON.stringify(c) ? '2px solid #3b82f6' : '1px solid #e5e7eb', background: JSON.stringify(colorTheme) === JSON.stringify(c) ? '#eff6ff' : 'white' }}>
+                                        {JSON.stringify(colorTheme) === JSON.stringify(c) && (
+                                            <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
+                                                <Check size={9} className="text-white" strokeWidth={3} />
+                                            </div>
+                                        )}
+                                        <div className="flex gap-1 mb-1.5">
+                                            <div className="w-4 h-4 rounded-full" style={{ background: c.primary }} />
+                                            <div className="w-4 h-4 rounded-full" style={{ background: c.accent }} />
+                                            <div className="w-4 h-4 rounded-full border border-gray-200" style={{ background: c.background }} />
                                         </div>
-                                        <p className="text-xs">{c.name}</p>
+                                        <p className="text-xs text-gray-600 font-medium">{c.name}</p>
                                     </button>
                                 ))}
                             </div>
                         </div>
                         <div>
-                            <h3 className="text-sm font-semibold mb-3 text-[var(--muted)]">สีแบรนด์ประกัน</h3>
-                            <div className="grid grid-cols-2 gap-2">
-                                {brandPresets.map((b, i) => (
-                                    <button key={i} onClick={() => applyBrandColor(b)}
-                                        className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-left transition-all flex items-center gap-2">
-                                        <div className="w-5 h-5 rounded-full shrink-0" style={{ background: b.primary }} />
-                                        <span className="text-xs truncate">{b.name}</span>
-                                    </button>
-                                ))}
-                            </div>
+                            <h3 className="text-xs font-semibold mb-2.5 text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                                สีแบรนด์ {!canUseBrandColors && <Lock size={10} className="text-purple-400" />}
+                            </h3>
+                            {!canUseBrandColors ? (
+                                <div className="p-3 rounded-xl text-center" style={{ background: '#FAF5FF', border: '1px solid #E9D5FF' }}>
+                                    <Lock size={14} className="text-purple-500 mx-auto mb-1" />
+                                    <p className="text-xs text-gray-600 mb-2">อัพเกรดเป็น Pro เพื่อใช้สีแบรนด์</p>
+                                    <button onClick={() => router.push('/dashboard/subscription')} className="text-xs font-semibold text-purple-600 hover:underline">อัพเกรดเลย →</button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-2">
+                                    {brandPresets.map((b, i) => (
+                                        <button key={i} onClick={() => applyBrandColor(b)}
+                                            className="p-2 rounded-xl border border-gray-100 hover:border-gray-300 bg-white text-left transition-all flex items-center gap-2">
+                                            <div className="w-5 h-5 rounded-full shrink-0" style={{ background: b.primary }} />
+                                            <span className="text-xs text-gray-600 truncate">{b.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                         <div>
-                            <h3 className="text-sm font-semibold mb-3 text-[var(--muted)]">กำหนดสีเอง</h3>
-                            <div className="space-y-3">
+                            <h3 className="text-xs font-semibold mb-2.5 text-gray-400 uppercase tracking-wider">กำหนดสีเอง</h3>
+                            <div className="space-y-2.5">
                                 {[
                                     { key: 'primary', label: 'สีหลัก' },
                                     { key: 'accent', label: 'สี Accent' },
                                     { key: 'background', label: 'พื้นหลัง' },
                                 ].map(c => (
                                     <label key={c.key} className="flex items-center gap-3">
-                                        <input type="color" value={(colorTheme as any)[c.key]} onChange={e => setColorTheme(prev => ({ ...prev, [c.key]: e.target.value }))} className="w-8 h-8 rounded cursor-pointer border-0" />
-                                        <span className="text-sm">{c.label}</span>
+                                        <input type="color" value={(colorTheme as any)[c.key]} onChange={e => setColorTheme(prev => ({ ...prev, [c.key]: e.target.value }))} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
+                                        <span className="text-sm text-gray-600">{c.label}</span>
                                     </label>
                                 ))}
                             </div>
@@ -222,7 +341,8 @@ export default function BuilderPage() {
                 )
             case 'hero':
                 return (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
+                        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">แก้ไขส่วนหัว</p>
                         {[
                             { key: 'name', label: 'ชื่อ' },
                             { key: 'title', label: 'ตำแหน่ง/หัวข้อ' },
@@ -232,35 +352,36 @@ export default function BuilderPage() {
                             { key: 'imageUrl', label: 'URL รูปโปรไฟล์' },
                         ].map(f => (
                             <label key={f.key} className="block">
-                                <span className="text-xs text-[var(--muted)] mb-1 block">{f.label}</span>
+                                <span className="text-xs text-gray-500 mb-1 block font-medium">{f.label}</span>
                                 <input type="text" value={(config.hero as any)?.[f.key] || ''} onChange={e => updateConfig('hero', f.key, e.target.value)}
-                                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none transition-all" />
+                                    className={inp} style={inpStyle} />
                             </label>
                         ))}
                         <label className="block">
-                            <span className="text-xs text-[var(--muted)] mb-1 block">CTA หลัก</span>
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">ปุ่ม (CTA) หลัก</span>
                             <input type="text" value={config.hero?.ctaPrimary?.text || ''} onChange={e => updateConfig('hero', 'ctaPrimary', { ...config.hero?.ctaPrimary, text: e.target.value })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none transition-all" />
+                                className={inp} style={inpStyle} />
                         </label>
                         <label className="block">
-                            <span className="text-xs text-[var(--muted)] mb-1 block">CTA รอง</span>
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">ปุ่ม (CTA) รอง</span>
                             <input type="text" value={config.hero?.ctaSecondary?.text || ''} onChange={e => updateConfig('hero', 'ctaSecondary', { ...config.hero?.ctaSecondary, text: e.target.value })}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none transition-all" />
+                                className={inp} style={inpStyle} />
                         </label>
                     </div>
                 )
             case 'navbar':
                 return (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
+                        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">แก้ไข Navbar</p>
                         <label className="block">
-                            <span className="text-xs text-[var(--muted)] mb-1 block">Logo Text</span>
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">Logo Text</span>
                             <input type="text" value={config.navbar?.logo || ''} onChange={e => updateConfig('navbar', 'logo', e.target.value)}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" />
+                                className={inp} style={inpStyle} />
                         </label>
                         <label className="block">
-                            <span className="text-xs text-[var(--muted)] mb-1 block">CTA Text</span>
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">CTA Text</span>
                             <input type="text" value={config.navbar?.ctaText || ''} onChange={e => updateConfig('navbar', 'ctaText', e.target.value)}
-                                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" />
+                                className={inp} style={inpStyle} />
                         </label>
                     </div>
                 )
@@ -271,110 +392,368 @@ export default function BuilderPage() {
 
     const renderGenericSection = (section: keyof PageConfig) => {
         const data = config[section] as any
-        if (!data) return <p className="text-sm text-[var(--muted)]">ไม่มีข้อมูล</p>
+        if (!data) return <p className="text-sm text-gray-400 text-center py-6">ไม่มีข้อมูล</p>
 
         return (
-            <div className="space-y-4">
+            <div className="space-y-3">
+                <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">
+                    แก้ไข — {SECTIONS.find(s => s.id === section)?.name || section}
+                </p>
                 {data.title !== undefined && (
                     <label className="block">
-                        <span className="text-xs text-[var(--muted)] mb-1 block">หัวข้อ</span>
+                        <span className="text-xs text-gray-500 mb-1 block font-medium">หัวข้อ</span>
                         <input type="text" value={data.title || ''} onChange={e => updateConfig(section, 'title', e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" />
+                            className={inp} style={inpStyle} />
                     </label>
                 )}
                 {data.subtitle !== undefined && (
                     <label className="block">
-                        <span className="text-xs text-[var(--muted)] mb-1 block">หัวข้อรอง</span>
+                        <span className="text-xs text-gray-500 mb-1 block font-medium">หัวข้อรอง</span>
                         <input type="text" value={data.subtitle || ''} onChange={e => updateConfig(section, 'subtitle', e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" />
+                            className={inp} style={inpStyle} />
                     </label>
                 )}
                 {data.items?.map((item: any, i: number) => (
-                    <div key={i} className="p-3 rounded-lg bg-white/3 border border-white/5 space-y-2">
-                        <span className="text-xs text-[var(--muted)]">#{i + 1}</span>
-                        {item.title !== undefined && <input type="text" value={item.title} onChange={e => updateArrayItem(section, i, 'title', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" placeholder="หัวข้อ" />}
-                        {item.description !== undefined && <input type="text" value={item.description} onChange={e => updateArrayItem(section, i, 'description', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" placeholder="คำอธิบาย" />}
-                        {item.quote !== undefined && <input type="text" value={item.quote} onChange={e => updateArrayItem(section, i, 'quote', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" placeholder="Quote" />}
-                        {item.name !== undefined && <input type="text" value={item.name} onChange={e => updateArrayItem(section, i, 'name', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" placeholder="ชื่อ" />}
-                        {item.value !== undefined && <input type="text" value={item.value} onChange={e => updateArrayItem(section, i, 'value', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" placeholder="ค่า" />}
-                        {item.label !== undefined && <input type="text" value={item.label} onChange={e => updateArrayItem(section, i, 'label', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" placeholder="Label" />}
+                    <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                        <span className="text-xs text-gray-400 font-medium">รายการ #{i + 1}</span>
+                        {item.title !== undefined && <input type="text" value={item.title} onChange={e => updateArrayItem(section, i, 'title', e.target.value)} className={inp} style={inpStyle} placeholder="หัวข้อ" />}
+                        {item.description !== undefined && <input type="text" value={item.description} onChange={e => updateArrayItem(section, i, 'description', e.target.value)} className={inp} style={inpStyle} placeholder="คำอธิบาย" />}
+                        {item.quote !== undefined && <input type="text" value={item.quote} onChange={e => updateArrayItem(section, i, 'quote', e.target.value)} className={inp} style={inpStyle} placeholder="Quote" />}
+                        {item.name !== undefined && <input type="text" value={item.name} onChange={e => updateArrayItem(section, i, 'name', e.target.value)} className={inp} style={inpStyle} placeholder="ชื่อ" />}
+                        {item.value !== undefined && <input type="text" value={item.value} onChange={e => updateArrayItem(section, i, 'value', e.target.value)} className={inp} style={inpStyle} placeholder="ค่า" />}
+                        {item.label !== undefined && <input type="text" value={item.label} onChange={e => updateArrayItem(section, i, 'label', e.target.value)} className={inp} style={inpStyle} placeholder="Label" />}
                     </div>
                 ))}
-                {/* Single fields */}
                 {data.email !== undefined && (
-                    <label className="block"><span className="text-xs text-[var(--muted)] mb-1 block">Email</span>
-                        <input type="text" value={data.email || ''} onChange={e => updateConfig(section, 'email', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" /></label>
+                    <label className="block"><span className="text-xs text-gray-500 mb-1 block font-medium">Email</span>
+                        <input type="text" value={data.email || ''} onChange={e => updateConfig(section, 'email', e.target.value)} className={inp} style={inpStyle} /></label>
                 )}
                 {data.phone !== undefined && (
-                    <label className="block"><span className="text-xs text-[var(--muted)] mb-1 block">โทร</span>
-                        <input type="text" value={data.phone || ''} onChange={e => updateConfig(section, 'phone', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" /></label>
+                    <label className="block"><span className="text-xs text-gray-500 mb-1 block font-medium">โทร</span>
+                        <input type="text" value={data.phone || ''} onChange={e => updateConfig(section, 'phone', e.target.value)} className={inp} style={inpStyle} /></label>
                 )}
                 {data.line !== undefined && (
-                    <label className="block"><span className="text-xs text-[var(--muted)] mb-1 block">Line</span>
-                        <input type="text" value={data.line || ''} onChange={e => updateConfig(section, 'line', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" /></label>
+                    <label className="block"><span className="text-xs text-gray-500 mb-1 block font-medium">Line</span>
+                        <input type="text" value={data.line || ''} onChange={e => updateConfig(section, 'line', e.target.value)} className={inp} style={inpStyle} /></label>
                 )}
                 {data.buttonText !== undefined && (
-                    <label className="block"><span className="text-xs text-[var(--muted)] mb-1 block">ข้อความปุ่ม</span>
-                        <input type="text" value={data.buttonText || ''} onChange={e => updateConfig(section, 'buttonText', e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:border-purple-500 focus:outline-none" /></label>
+                    <label className="block"><span className="text-xs text-gray-500 mb-1 block font-medium">ข้อความปุ่ม</span>
+                        <input type="text" value={data.buttonText || ''} onChange={e => updateConfig(section, 'buttonText', e.target.value)} className={inp} style={inpStyle} /></label>
                 )}
             </div>
         )
     }
 
-    if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-purple-500" size={32} /></div>
+    if (status === 'loading') return (
+        <div className="min-h-screen flex items-center justify-center" style={{ background: '#f8fafc' }}>
+            <div className="flex flex-col items-center gap-3">
+                <Loader2 className="animate-spin text-blue-500" size={28} />
+                <p className="text-sm text-gray-400">กำลังโหลด...</p>
+            </div>
+        </div>
+    )
 
-    return (
-        <div className="h-screen flex flex-col overflow-hidden">
-            {/* Header */}
-            <header className="glass shrink-0 z-50">
-                <div className="px-4 py-3 flex items-center justify-between">
+    /* ══════════════════════════════════════════════
+       SCREEN 1 — Template Picker (light)
+    ══════════════════════════════════════════════ */
+    if (showTemplatePicker) {
+        const selectedOpt = TEMPLATE_OPTIONS.find(o => o.id === template) || TEMPLATE_OPTIONS[0]
+        return (
+            <div className="min-h-screen flex flex-col" style={{ background: '#f8fafc' }}>
+                {/* Header */}
+                <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-3">
-                        <button onClick={() => router.push('/dashboard')} className="p-2 rounded-lg hover:bg-white/5"><ArrowLeft size={18} /></button>
-                        <input type="text" value={pageTitle} onChange={e => setPageTitle(e.target.value)} className="bg-transparent font-semibold text-sm focus:outline-none border-b border-transparent focus:border-purple-500 pr-4" placeholder="ชื่อเพจ" />
+                        <button onClick={() => router.push('/dashboard')} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all">
+                            <ArrowLeft size={15} />
+                        </button>
+                        <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-xl flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-md"
+                            style={{ background: 'linear-gradient(135deg,#7c3aed,#06b6d4)' }}>SP</div>
+                        <div className="hidden sm:block">
+                            <p className="text-sm font-bold text-gray-900 leading-tight">SalesPage Builder</p>
+                            <p className="text-xs text-gray-400">สร้างเซลเพจสำหรับมืออาชีพ</p>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        {saving && <span className="text-xs text-[var(--muted)] flex items-center gap-1"><Loader2 size={12} className="animate-spin" /> กำลังบันทึก...</span>}
-                        {isPublished && pageSlug && (
-                            <a href={`/p/${pageSlug}`} target="_blank" className="flex items-center gap-1 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs transition-all">
-                                <Globe size={12} /> ดูเพจ
-                            </a>
-                        )}
-                        <button onClick={handleSave} className="flex items-center gap-1 px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white text-sm font-medium transition-all">
-                            <Save size={14} /> เผยแพร่
+                    {tier === 'free' && (
+                        <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full" style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: '#3b82f6' }}>
+                            <Zap size={12} />
+                            <span className="hidden sm:inline">Free Trial</span>{daysLeft !== null && ` · ${daysLeft} วัน`}
+                        </div>
+                    )}
+                </header>
+
+                {/* Expired banner */}
+                {isExpired && (
+                    <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4" style={{ background: '#FEF2F2', borderBottom: '1px solid #FECACA' }}>
+                        <div className="flex items-center gap-3">
+                            <Zap size={16} className="text-red-500 shrink-0" />
+                            <div>
+                                <p className="text-xs sm:text-sm font-semibold text-red-700">แพ็กเกจ Free Trial หมดอายุแล้ว</p>
+                                <p className="text-[10px] sm:text-xs text-red-500">อัพเกรดเพื่อสร้างและแก้ไขเพจต่อ</p>
+                            </div>
+                        </div>
+                        <button onClick={() => router.push('/dashboard/subscription')} className="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white shrink-0" style={{ background: '#7c3aed' }}>
+                            อัพเกรด
                         </button>
                     </div>
+                )}
+
+                {/* Content */}
+                <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 max-w-4xl mx-auto w-full">
+                    {/* Hero text */}
+                    <div className="text-center mb-6 sm:mb-10">
+                        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-5"
+                            style={{ background: '#eff6ff', color: '#3b82f6', border: '1px solid #bfdbfe' }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            เลือกเทมเพลทที่เหมาะกับคุณ
+                        </div>
+                        <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">สร้างเซลเพจของคุณ</h1>
+                        <p className="text-gray-400 text-xs sm:text-base">เลือกเทมเพลทที่ตรงกับอาชีพของคุณ แล้วปรับแต่งข้อมูลได้ทันที</p>
+                    </div>
+
+                    {/* Template cards grid */}
+                    <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                        {TEMPLATE_OPTIONS.map(opt => (
+                            <TemplatePreviewCard
+                                key={opt.id}
+                                opt={opt}
+                                isSelected={template === opt.id}
+                                locked={!canUseAllTemplates && opt.id !== 'professional'}
+                                onSelect={() => {
+                                    if (!canUseAllTemplates && opt.id !== 'professional') {
+                                        setShowUpgradeHint('template')
+                                        return
+                                    }
+                                    setTemplate(opt.id)
+                                    setColorTheme(templateColorPresets[opt.id][0])
+                                    const preset = CONTENT_PRESETS.find(p =>
+                                        (opt.id === 'professional' && p.id === 'financial') ||
+                                        (opt.id === 'premium' && p.id === 'realestate') ||
+                                        p.id === 'generic'
+                                    )
+                                    if (preset) applyContentPreset(preset.preset)
+                                    setShowTemplatePicker(false)
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Upgrade hint */}
+                    {!canUseAllTemplates && (
+                        <div className="text-center p-4 sm:p-5 rounded-2xl mb-6" style={{ background: '#FAF5FF', border: '1px solid #E9D5FF' }}>
+                            <Crown size={22} className="text-purple-500 mx-auto mb-2" />
+                            <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-1">ปลดล็อกเทมเพลททั้งหมด</p>
+                            <p className="text-[10px] sm:text-xs text-gray-500 mb-3">อัพเกรดเป็น Pro เพื่อใช้งาน Premium & Minimal เทมเพลท</p>
+                            <button onClick={() => router.push('/dashboard/subscription')} className="px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white inline-flex items-center gap-1.5" style={{ background: '#7c3aed' }}>
+                                อัพเกรดเลย <ArrowRight size={13} />
+                            </button>
+                        </div>
+                    )}
+                </main>
+            </div>
+        )
+    }
+
+    /* ══════════════════════════════════════════════
+       SCREEN 2 — Editor (light theme)
+    ══════════════════════════════════════════════ */
+    const activeTemplateOpt = TEMPLATE_OPTIONS.find(o => o.id === template) || TEMPLATE_OPTIONS[0]
+    const activeSectionInfo = SECTIONS.find(s => s.id === activeSection)
+
+    return (
+        <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#f1f5f9' }}>
+
+            {/* ── TOP HEADER ── */}
+            <header className="shrink-0 z-50 flex items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5 bg-white"
+                style={{ borderBottom: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <button
+                        onClick={() => setShowTemplatePicker(true)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm shrink-0"
+                    >
+                        <ArrowLeft size={14} /> <span className="hidden sm:inline">กลับ</span>
+                    </button>
+                    <div className="w-px h-4 sm:h-5 bg-gray-200 shrink-0" />
+                    <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-5 sm:w-6 h-5 sm:h-6 rounded-md text-white font-bold text-[10px] sm:text-xs flex items-center justify-center shrink-0"
+                            style={{ background: activeTemplateOpt.themeColor }}>S</div>
+                        <input
+                            type="text"
+                            value={pageTitle}
+                            onChange={e => setPageTitle(e.target.value)}
+                            className="font-semibold text-xs sm:text-sm focus:outline-none text-gray-800 placeholder-gray-300 min-w-0 w-28 sm:w-44 bg-transparent"
+                            placeholder="ชื่อเพจ"
+                        />
+                    </div>
+                </div>
+
+                {/* Color theme dots in header — desktop only */}
+                <div className="hidden md:flex items-center gap-1.5">
+                    <span className="text-xs text-gray-400 mr-1">ธีมสี:</span>
+                    {templateColorPresets[template].slice(0, 5).map((c, i) => (
+                        <button key={i} onClick={() => setColorTheme(c)}
+                            className="transition-all"
+                            style={{ width: 22, height: 22, borderRadius: '50%', background: c.primary, border: JSON.stringify(colorTheme) === JSON.stringify(c) ? '2.5px solid #1e293b' : '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                    ))}
+                </div>
+
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    {saving && (
+                        <span className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
+                            <Loader2 size={10} className="animate-spin" /> <span className="hidden sm:inline">บันทึก...</span>
+                        </span>
+                    )}
+                    {isPublished && pageSlug && (
+                        <a href={`/p/${pageSlug}`} target="_blank"
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all border border-gray-200">
+                            <Globe size={12} /> ดูตัวอย่าง
+                        </a>
+                    )}
+                    <button
+                        onClick={handleSave}
+                        className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90"
+                        style={{ background: activeTemplateOpt.themeColor }}
+                    >
+                        <Save size={12} />
+                        <span className="hidden sm:inline">{isPublished ? 'บันทึก' : 'เผยแพร่'}</span>
+                    </button>
                 </div>
             </header>
 
-            {/* Body */}
-            <div className="flex-1 flex overflow-hidden">
-                {/* Sidebar Nav */}
-                <div className="w-16 shrink-0 border-r border-white/10 bg-[#1a1a2e] flex flex-col py-2 overflow-y-auto">
+            {/* ── BODY ── */}
+            <div className="flex-1 flex overflow-hidden relative">
+
+                {/* LEFT: Section list — hidden on mobile */}
+                <div className="hidden md:block w-[200px] shrink-0 overflow-y-auto bg-white"
+                    style={{ borderRight: '1px solid #e5e7eb' }}>
+                    <div className="px-3 pt-4 pb-2">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">เลือกส่วนที่ต้องแก้ไข</p>
+                    </div>
                     {SECTIONS.map(s => (
-                        <button key={s.id} onClick={() => setActiveSection(s.id)}
-                            className={`flex flex-col items-center gap-1 px-1 py-3 text-center transition-all border-l-2 ${activeSection === s.id ? 'border-purple-500 bg-purple-500/10 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                            {s.icon}
-                            <span className="text-[10px] leading-tight">{s.name}</span>
+                        <button
+                            key={s.id}
+                            onClick={() => {
+                                setActiveSection(s.id)
+                                if (previewRef.current && s.id !== 'colors') {
+                                    const el = previewRef.current.querySelector(`#section-${s.id}`)
+                                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                }
+                            }}
+                            className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all text-left ${activeSection === s.id
+                                ? 'font-semibold text-white'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                            style={activeSection === s.id ? { background: activeTemplateOpt.themeColor, borderRadius: 0 } : {}}
+                        >
+                            <span className={activeSection === s.id ? 'text-white/80' : 'text-gray-400'}>{s.icon}</span>
+                            {s.name}
                         </button>
                     ))}
                 </div>
-                {/* Sidebar Editor */}
-                <div className="w-72 shrink-0 border-r border-white/10 flex flex-col bg-[#12121f]">
-                    <div className="p-4 border-b border-white/10 shrink-0">
-                        <h2 className="text-base font-bold text-white">{SECTIONS.find(s => s.id === activeSection)?.name}</h2>
+
+                {/* MIDDLE: Editor form — hidden on mobile (use drawer instead) */}
+                <div className="hidden md:flex w-[280px] shrink-0 flex-col overflow-hidden bg-white"
+                    style={{ borderRight: '1px solid #e5e7eb' }}>
+                    {/* Panel header */}
+                    <div className="px-4 py-3 shrink-0 flex items-center gap-2"
+                        style={{ borderBottom: '1px solid #e5e7eb', background: '#f8fafc' }}>
+                        <div className="w-1.5 h-4 rounded-full" style={{ background: activeTemplateOpt.themeColor }} />
+                        <h2 className="text-sm font-bold text-gray-800">
+                            {activeSectionInfo?.name}
+                        </h2>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4">
                         {renderSectionEditor()}
                     </div>
                 </div>
 
-                {/* Preview */}
-                <div className="flex-1 overflow-y-auto bg-gray-900">
-                    <div className="min-h-full">
+                {/* RIGHT: Preview */}
+                <div ref={previewRef} className="flex-1 overflow-y-auto" style={{ background: '#e2e8f0' }}>
+                    <div className="min-h-full shadow-xl" style={{ margin: '0 auto' }}>
                         {renderTemplatePreview()}
                     </div>
                 </div>
             </div>
+
+            {/* ── MOBILE: Floating edit button ── */}
+            <div className="md:hidden fixed bottom-5 right-5 z-40 flex flex-col gap-2">
+                <button
+                    onClick={() => { setMobileDrawerOpen(true); setMobileSectionListOpen(true) }}
+                    className="w-14 h-14 rounded-2xl text-white shadow-2xl flex items-center justify-center transition-all active:scale-95"
+                    style={{ background: activeTemplateOpt.themeColor, boxShadow: `0 8px 24px ${activeTemplateOpt.themeColor}50` }}
+                >
+                    <Menu size={22} />
+                </button>
+            </div>
+
+            {/* ── MOBILE: Bottom Drawer ── */}
+            {mobileDrawerOpen && (
+                <>
+                    <div className="bottom-sheet-overlay" onClick={() => setMobileDrawerOpen(false)} />
+                    <div className="bottom-sheet" style={{ background: 'white' }}>
+                        <div className="bottom-sheet-handle" style={{ background: '#d1d5db' }} />
+
+                        {/* Drawer header */}
+                        <div className="px-5 pt-3 pb-2 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1.5 h-4 rounded-full" style={{ background: activeTemplateOpt.themeColor }} />
+                                <span className="text-sm font-bold text-gray-800">
+                                    {mobileSectionListOpen ? 'เลือกส่วนที่แก้ไข' : activeSectionInfo?.name}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {!mobileSectionListOpen && (
+                                    <button
+                                        onClick={() => setMobileSectionListOpen(true)}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 flex items-center gap-1"
+                                        style={{ background: '#f1f5f9' }}
+                                    >
+                                        <Layout size={12} /> เปลี่ยนส่วน
+                                    </button>
+                                )}
+                                <button onClick={() => { setMobileDrawerOpen(false); setMobileSectionListOpen(false) }} className="p-2 rounded-lg text-gray-400 hover:text-gray-700">
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Drawer content */}
+                        <div className="px-5 pb-6 max-h-[60vh] overflow-y-auto">
+                            {mobileSectionListOpen ? (
+                                <div className="grid grid-cols-3 gap-2">
+                                    {SECTIONS.map(s => (
+                                        <button
+                                            key={s.id}
+                                            onClick={() => {
+                                                setActiveSection(s.id)
+                                                setMobileSectionListOpen(false)
+                                                // Scroll preview to the selected section
+                                                if (previewRef.current && s.id !== 'colors') {
+                                                    setTimeout(() => {
+                                                        const el = previewRef.current?.querySelector(`#section-${s.id}`)
+                                                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                                    }, 100)
+                                                }
+                                            }}
+                                            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-medium transition-all ${activeSection === s.id ? 'text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                                            style={activeSection === s.id ? { background: activeTemplateOpt.themeColor } : { background: '#f8fafc', border: '1px solid #e5e7eb' }}
+                                        >
+                                            <span className={activeSection === s.id ? 'text-white/80' : 'text-gray-400'}>{s.icon}</span>
+                                            {s.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                renderSectionEditor()
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {/* ── Toast ── */}
+            {toastMsg && (
+                <Toast message={toastMsg} type={toastType} onClose={() => setToastMsg(null)} />
+            )}
         </div>
     )
 }

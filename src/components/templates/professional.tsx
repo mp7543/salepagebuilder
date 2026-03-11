@@ -12,12 +12,30 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
     return (
         <div style={{ fontFamily: "'Prompt', 'Inter', sans-serif", color: c.text, background: c.background }}>
             <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+            <style>{`
+                @media (max-width: 768px) {
+                    .tpl-pro-hero-wrap { flex-direction: column !important; padding: 48px 16px !important; gap: 32px !important; }
+                    .tpl-pro-hero-title { font-size: 32px !important; }
+                    .tpl-pro-hero-img { width: 100% !important; height: 280px !important; }
+                    .tpl-pro-grid-3 { grid-template-columns: 1fr !important; }
+                    .tpl-pro-grid-2 { grid-template-columns: 1fr !important; }
+                    .tpl-pro-stats { grid-template-columns: repeat(2, 1fr) !important; }
+                    .tpl-pro-section { padding: 48px 16px !important; }
+                    .tpl-pro-section-title { font-size: 24px !important; }
+                    .tpl-pro-cta-title { font-size: 24px !important; }
+                    .tpl-pro-nav-links { display: none !important; }
+                    .tpl-pro-contact-grid { grid-template-columns: 1fr !important; }
+                    .tpl-pro-footer-wrap { flex-direction: column !important; text-align: center !important; gap: 12px !important; }
+                    .tpl-pro-hero-btns { flex-direction: column !important; align-items: stretch !important; }
+                    .tpl-pro-hero-btns a { text-align: center !important; }
+                }
+            `}</style>
 
             {/* Navbar */}
-            <nav style={{ background: c.primary, color: '#fff', padding: '16px 0', position: 'sticky', top: 0, zIndex: 50 }}>
+            <nav id="section-navbar" style={{ background: c.primary, color: '#fff', padding: '16px 0', position: 'sticky', top: 0, zIndex: 50 }}>
                 <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ fontSize: 20, fontWeight: 700 }}>{config.navbar?.logo}</span>
-                    <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+                    <div className="tpl-pro-nav-links" style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
                         {config.navbar?.links?.map((l, i) => (
                             <a key={i} href={l.href} style={{ color: 'rgba(255,255,255,0.85)', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>{l.text}</a>
                         ))}
@@ -29,17 +47,17 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </nav>
 
             {/* Hero */}
-            <section style={{ background: `linear-gradient(135deg, ${c.background}, ${c.surface})`, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 24px', display: 'flex', alignItems: 'center', gap: 60 }}>
+            <section id="section-hero" style={{ background: `linear-gradient(135deg, ${c.background}, ${c.surface})`, position: 'relative', overflow: 'hidden' }}>
+                <div className="tpl-pro-hero-wrap" style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 24px', display: 'flex', alignItems: 'center', gap: 60 }}>
                     <div style={{ flex: 1 }}>
                         <p style={{ color: c.accent, fontWeight: 600, fontSize: 14, marginBottom: 16, letterSpacing: 1 }}>{config.hero?.credentials}</p>
-                        <h1 style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.2, marginBottom: 16, color: c.primary }}>{config.hero?.name}</h1>
+                        <h1 className="tpl-pro-hero-title" style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.2, marginBottom: 16, color: c.primary }}>{config.hero?.name}</h1>
                         <h2 style={{ fontSize: 20, fontWeight: 500, color: c.textLight, marginBottom: 24 }}>{config.hero?.title}</h2>
                         <blockquote style={{ fontSize: 18, fontStyle: 'italic', color: c.text, marginBottom: 16, borderLeft: `4px solid ${c.accent}`, paddingLeft: 20, lineHeight: 1.8 }}>
                             {config.hero?.quote}
                         </blockquote>
                         <p style={{ fontSize: 14, color: c.textLight, marginBottom: 32 }}>{config.hero?.subtitle}</p>
-                        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                        <div className="tpl-pro-hero-btns" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                             <a href={config.hero?.ctaPrimary?.href} style={{ background: c.primary, color: '#fff', padding: '14px 32px', borderRadius: 12, fontWeight: 600, textDecoration: 'none', fontSize: 16 }}>
                                 {config.hero?.ctaPrimary?.text}
                             </a>
@@ -48,7 +66,7 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
                             </a>
                         </div>
                     </div>
-                    <div style={{ width: 380, height: 460, borderRadius: 24, background: `linear-gradient(135deg, ${c.primary}20, ${c.accent}20)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                    <div className="tpl-pro-hero-img" style={{ width: 380, height: 460, borderRadius: 24, background: `linear-gradient(135deg, ${c.primary}20, ${c.accent}20)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                         {config.hero?.imageUrl ? (
                             <img src={config.hero.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
@@ -59,8 +77,8 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* Stats */}
-            <section style={{ background: c.primary, padding: '48px 24px' }}>
-                <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: `repeat(${config.stats?.items?.length || 4}, 1fr)`, gap: 32, textAlign: 'center' }}>
+            <section id="section-stats" style={{ background: c.primary, padding: '48px 24px' }}>
+                <div className="tpl-pro-stats" style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: `repeat(${config.stats?.items?.length || 4}, 1fr)`, gap: 32, textAlign: 'center' }}>
                     {config.stats?.items?.map((s, i) => (
                         <div key={i}>
                             <div style={{ fontSize: 40, fontWeight: 700, color: '#fff' }}>{s.value}</div>
@@ -71,11 +89,11 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* Core Values */}
-            <section style={{ padding: '80px 24px', background: c.surface }}>
+            <section id="section-values" className="tpl-pro-section" style={{ padding: '80px 24px', background: c.surface }}>
                 <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
-                    <h2 style={{ fontSize: 36, fontWeight: 700, marginBottom: 8, color: c.primary }}>{config.values?.title}</h2>
+                    <h2 className="tpl-pro-section-title" style={{ fontSize: 36, fontWeight: 700, marginBottom: 8, color: c.primary }}>{config.values?.title}</h2>
                     <p style={{ color: c.textLight, marginBottom: 48, fontSize: 16 }}>{config.values?.subtitle}</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+                    <div className="tpl-pro-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
                         {config.values?.items?.map((v, i) => (
                             <div key={i} style={{ padding: 32, borderRadius: 16, border: `1px solid ${c.primary}15`, background: c.background, textAlign: 'center' }}>
                                 <div style={{ fontSize: 40, marginBottom: 16 }}>{v.icon}</div>
@@ -88,11 +106,11 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* Services */}
-            <section style={{ padding: '80px 24px', background: c.background }}>
+            <section id="section-services" className="tpl-pro-section" style={{ padding: '80px 24px', background: c.background }}>
                 <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
                     <p style={{ color: c.accent, fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{config.services?.label}</p>
-                    <h2 style={{ fontSize: 36, fontWeight: 700, marginBottom: 48, color: c.primary }}>{config.services?.title}</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+                    <h2 className="tpl-pro-section-title" style={{ fontSize: 36, fontWeight: 700, marginBottom: 48, color: c.primary }}>{config.services?.title}</h2>
+                    <div className="tpl-pro-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
                         {config.services?.items?.map((s, i) => (
                             <div key={i} style={{ padding: 28, borderRadius: 16, background: c.surface, display: 'flex', alignItems: 'center', gap: 16, textAlign: 'left' }}>
                                 <div style={{ width: 56, height: 56, borderRadius: 28, background: `${c.primary}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>{s.icon}</div>
@@ -107,10 +125,10 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* Testimonials */}
-            <section style={{ padding: '80px 24px', background: c.surface }}>
+            <section id="section-testimonials" className="tpl-pro-section" style={{ padding: '80px 24px', background: c.surface }}>
                 <div style={{ maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
-                    <h2 style={{ fontSize: 36, fontWeight: 700, marginBottom: 48, color: c.primary }}>{config.testimonials?.title}</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+                    <h2 className="tpl-pro-section-title" style={{ fontSize: 36, fontWeight: 700, marginBottom: 48, color: c.primary }}>{config.testimonials?.title}</h2>
+                    <div className="tpl-pro-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
                         {config.testimonials?.items?.map((t, i) => (
                             <div key={i} style={{ padding: 32, borderRadius: 16, background: c.background, textAlign: 'left' }}>
                                 <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
@@ -131,11 +149,11 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* Why Choose */}
-            <section style={{ padding: '80px 24px', background: c.background }}>
+            <section className="tpl-pro-section" style={{ padding: '80px 24px', background: c.background }}>
                 <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-                    <h2 style={{ fontSize: 36, fontWeight: 700, textAlign: 'center', marginBottom: 8, color: c.primary }}>{config.whyChoose?.title}</h2>
+                    <h2 className="tpl-pro-section-title" style={{ fontSize: 36, fontWeight: 700, textAlign: 'center', marginBottom: 8, color: c.primary }}>{config.whyChoose?.title}</h2>
                     <p style={{ textAlign: 'center', color: c.textLight, marginBottom: 48 }}>{config.whyChoose?.subtitle}</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+                    <div className="tpl-pro-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
                         {config.whyChoose?.items?.map((w, i) => (
                             <div key={i} style={{ padding: 28, borderRadius: 16, background: c.surface, display: 'flex', gap: 16 }}>
                                 <div style={{ fontSize: 32 }}>{w.icon}</div>
@@ -150,8 +168,8 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* CTA */}
-            <section style={{ padding: '80px 24px', background: `linear-gradient(135deg, ${c.primary}, ${c.accent || c.primary}CC)`, textAlign: 'center' }}>
-                <h2 style={{ fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: 12 }}>{config.cta?.title}</h2>
+            <section id="section-cta" className="tpl-pro-section" style={{ padding: '80px 24px', background: `linear-gradient(135deg, ${c.primary}, ${c.accent || c.primary}CC)`, textAlign: 'center' }}>
+                <h2 className="tpl-pro-cta-title" style={{ fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: 12 }}>{config.cta?.title}</h2>
                 <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 32, fontSize: 16 }}>{config.cta?.subtitle}</p>
                 <a href={config.cta?.buttonHref} style={{ background: '#fff', color: c.primary, padding: '16px 40px', borderRadius: 12, fontWeight: 700, textDecoration: 'none', fontSize: 18 }}>
                     {config.cta?.buttonText}
@@ -159,11 +177,11 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
             </section>
 
             {/* Contact */}
-            <section style={{ padding: '80px 24px', background: c.surface }}>
+            <section id="section-contact" className="tpl-pro-section" style={{ padding: '80px 24px', background: c.surface }}>
                 <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-                    <h2 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8, color: c.primary }}>{config.contact?.title}</h2>
+                    <h2 className="tpl-pro-section-title" style={{ fontSize: 32, fontWeight: 700, marginBottom: 8, color: c.primary }}>{config.contact?.title}</h2>
                     <p style={{ color: c.textLight, marginBottom: 40 }}>{config.contact?.subtitle}</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, textAlign: 'left' }}>
+                    <div className="tpl-pro-contact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, textAlign: 'left' }}>
                         {[
                             { label: '📧 Email', value: config.contact?.email },
                             { label: '📱 โทร', value: config.contact?.phone },
@@ -181,7 +199,7 @@ export function ProfessionalTemplate({ config, colorTheme }: Props) {
 
             {/* Footer */}
             <footer style={{ background: c.primary, color: '#fff', padding: '40px 24px' }}>
-                <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="tpl-pro-footer-wrap" style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                         <p style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{config.footer?.logo}</p>
                         <p style={{ fontSize: 13, opacity: 0.7 }}>{config.footer?.description}</p>

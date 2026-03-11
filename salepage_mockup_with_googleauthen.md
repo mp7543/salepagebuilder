@@ -268,6 +268,8 @@ npm run dev
 | Subscription System | ✅ เสร็จ (Mock) |
 | Brand Color Presets | ✅ เสร็จ |
 | Content Presets | ✅ เสร็จ |
-| Custom Domain | 🔧 API เสร็จ, UI ยังไม่มี |
+| Builder Tier Locking | ✅ เสร็จ |
+| Custom Domain UI | ✅ เสร็จ (Premium) |
+| Responsive Mobile | ✅ เสร็จ |
 | Payment Gateway | ⏳ ยังไม่ integrate |
-| Responsive Mobile | ⏳ บางส่วน |
+
