@@ -3,7 +3,7 @@
 import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { Check, Sparkles, Zap, Crown, ArrowRight, Star, Layout, Palette, Globe, Shield, Bolt, Users, ChevronRight, Menu, X, Eye } from 'lucide-react'
+import { Check, Sparkles, Zap, Crown, ArrowRight, Star, Layout, Palette, Globe, Shield, Bolt, Users, ChevronRight, ChevronDown, Menu, X, Eye, HelpCircle, Building2 } from 'lucide-react'
 
 /* ═══════ DATA ═══════ */
 
@@ -107,6 +107,24 @@ const TEMPLATES = [
   },
 ]
 
+const TRUSTED_BY = [
+  { name: 'AIA', color: '#E31937' },
+  { name: 'FWD', color: '#E87722' },
+  { name: 'ไทยประกัน', color: '#003DA5' },
+  { name: 'เมืองไทย', color: '#ED1C24' },
+  { name: 'กรุงเทพ', color: '#003580' },
+  { name: 'แสนสิริ', color: '#1B3A5C' },
+]
+
+const FAQ_ITEMS = [
+  { q: 'ทดลองใช้ฟรีได้นานแค่ไหน?', a: 'คุณสามารถทดลองใช้ฟรี 14 วัน โดยได้ใช้งานเทมเพลท Professional พร้อม Hosting subdomain ไม่ต้องใส่บัตรเครดิต' },
+  { q: 'ยกเลิกสมาชิกได้ไหม?', a: 'ได้เลยครับ ยกเลิกได้ทุกเมื่อไม่มีเงื่อนไขซ่อนเร้น เพจที่สร้างไว้จะยังสามารถดูได้จนกว่าจะหมดรอบบิลปัจจุบัน' },
+  { q: 'Custom Domain ทำยังไง?', a: 'สำหรับแพ็กเกจ Premium คุณสามารถเชื่อมต่อโดเมนของคุณเอง เช่น yourbrand.com ได้ผ่านหน้า Dashboard โดยชี้ DNS มาที่เซิร์ฟเวอร์ของเรา' },
+  { q: 'แก้ไขเนื้อหาหลังเผยแพร่ได้ไหม?', a: 'ได้ครับ สามารถกลับมาแก้ไขเนื้อหา เปลี่ยนสี เปลี่ยนเทมเพลทได้ตลอดเวลา ระบบจะ Auto-Save ทุก 1.5 วินาที' },
+  { q: 'รองรับภาษาไทยไหม?', a: 'รองรับครับ ทุกเทมเพลทถูกออกแบบมาให้แสดงผลภาษาไทยได้สวยงาม ทั้งหัวข้อ เนื้อหา และปุ่ม CTA' },
+  { q: 'มีวิธีติดต่อทีมงานไหม?', a: 'ติดต่อเราได้ทาง Line Official Account หรือ Email: support@salepage.app เราตอบทุกข้อความภายใน 24 ชั่วโมง' },
+]
+
 /* ═══════ SCROLL REVEAL HOOK ═══════ */
 
 function useScrollReveal() {
@@ -138,7 +156,10 @@ export default function LandingPage() {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTemplate, setActiveTemplate] = useState(0)
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
   const scrollRef = useScrollReveal()
+
+  const toggleFaq = (i: number) => setOpenFaq(prev => prev === i ? null : i)
 
   const handleGetStarted = () => {
     if (session) {
@@ -509,14 +530,14 @@ export default function LandingPage() {
             </div>
 
             {/* Pro — highlighted */}
-            <div className="scroll-reveal-scale p-6 sm:p-8 rounded-2xl sm:rounded-3xl relative flex flex-col order-first sm:order-none"
+            <div className="scroll-reveal-scale p-6 sm:p-8 pt-5 sm:pt-7 rounded-2xl sm:rounded-3xl relative flex flex-col order-first sm:order-none"
               data-delay="2"
               style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.18) 0%, rgba(79,70,229,0.12) 50%, rgba(6,182,212,0.08) 100%)', border: '1px solid rgba(124,58,237,0.45)', boxShadow: '0 0 60px rgba(124,58,237,0.15), 0 20px 60px rgba(0,0,0,0.4)' }}>
-              <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2">
-                <div className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold text-white"
+              <div className="mb-3 sm:mb-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-white"
                   style={{ background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', boxShadow: '0 4px 16px rgba(124,58,237,0.4)' }}>
                   ⭐ แนะนำสำหรับมืออาชีพ
-                </div>
+                </span>
               </div>
               <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5"
                 style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)' }}>
@@ -571,6 +592,58 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== TRUSTED BY ===== */}
+      <section className="py-10 sm:py-14 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="scroll-reveal text-center">
+            <p className="text-xs sm:text-sm text-[var(--muted)] mb-5 sm:mb-6 uppercase tracking-widest font-medium">ตัวแทนจากบริษัทชั้นนำ เลือกใช้งาน</p>
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
+              {TRUSTED_BY.map((b, i) => (
+                <div key={i} className="scroll-reveal-scale flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl glass-light" data-delay={String((i % 3) + 1)}>
+                  <div className="w-7 sm:w-8 h-7 sm:h-8 rounded-lg flex items-center justify-center text-white font-bold text-[10px] sm:text-xs" style={{ background: b.color }}>
+                    {b.name.charAt(0)}
+                  </div>
+                  <span className="text-xs sm:text-sm text-[var(--muted-light)] font-medium">{b.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== FAQ ===== */}
+      <section id="faq" className="py-16 sm:py-24 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-10 sm:mb-14 scroll-reveal">
+            <div className="section-label mb-4 sm:mb-5 mx-auto" style={{ width: 'fit-content' }}>
+              <HelpCircle size={13} /> คำถามที่พบบ่อย
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4">
+              มีคำถาม?<br /><span className="gradient-text">เรามีคำตอบ</span>
+            </h2>
+          </div>
+
+          <div className="space-y-3 sm:space-y-4">
+            {FAQ_ITEMS.map((faq, i) => (
+              <div key={i} className="scroll-reveal glass-card rounded-2xl overflow-hidden" data-delay={String((i % 3) + 1)}>
+                <button
+                  onClick={() => toggleFaq(i)}
+                  className="w-full flex items-center justify-between gap-4 px-5 sm:px-6 py-4 sm:py-5 text-left"
+                >
+                  <span className="font-semibold text-sm sm:text-base">{faq.q}</span>
+                  <ChevronDown size={18} className={`text-[var(--muted)] shrink-0 transition-transform duration-300 ${openFaq === i ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <p className="px-5 sm:px-6 pb-5 text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

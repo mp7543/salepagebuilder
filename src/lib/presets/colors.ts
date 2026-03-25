@@ -32,4 +32,11 @@ export const templateColorPresets = {
         { name: 'Sage', primary: '#374151', secondary: '#F9FAFB', accent: '#6B8E6B', background: '#F9FAFB', surface: '#FFFFFF', text: '#374151', textLight: '#6B7280' },
         { name: 'Rose', primary: '#44403C', secondary: '#FAFAF9', accent: '#BE123C', background: '#FAFAF9', surface: '#FFFFFF', text: '#44403C', textLight: '#78716C' },
     ],
+    lighthouse: [
+        { name: 'Lighthouse Blue', primary: '#1E69DE', secondary: '#0047AB', accent: '#00B900', background: '#FFFFFF', surface: '#F0F5FF', text: '#1A1A2E', textLight: '#6B7280' },
+        { name: 'Ocean Trust', primary: '#0047AB', secondary: '#1E69DE', accent: '#00B900', background: '#FFFFFF', surface: '#EBF4FA', text: '#1B365D', textLight: '#64748B' },
+        { name: 'Corporate Navy', primary: '#1B365D', secondary: '#2563EB', accent: '#16A34A', background: '#FFFFFF', surface: '#F1F5F9', text: '#0F172A', textLight: '#475569' },
+        { name: 'Modern Blue', primary: '#2563EB', secondary: '#1D4ED8', accent: '#10B981', background: '#FFFFFF', surface: '#EFF6FF', text: '#1E293B', textLight: '#64748B' },
+    ],
 }
+

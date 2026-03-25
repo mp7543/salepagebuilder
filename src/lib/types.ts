@@ -11,6 +11,17 @@ export interface PageConfig {
     contact: ContactConfig
     footer: FooterConfig
     navbar: NavbarConfig
+    seo?: SeoConfig
+    pricing?: PricingConfig
+    faq?: FaqConfig
+    companyShowcase?: CompanyShowcaseConfig
+    recruitment?: RecruitmentConfig
+}
+
+export interface SeoConfig {
+    metaTitle: string
+    metaDescription: string
+    ogImage: string
 }
 
 export interface NavbarConfig {
@@ -39,13 +50,13 @@ export interface StatsConfig {
 export interface ValuesConfig {
     title: string
     subtitle: string
-    items: { icon: string; title: string; description: string }[]
+    items: { icon: string; title: string; description: string; imageUrl?: string }[]
 }
 
 export interface ServicesConfig {
     label: string
     title: string
-    items: { icon: string; title: string; description: string }[]
+    items: { icon: string; title: string; description: string; imageUrl?: string }[]
 }
 
 export interface TestimonialsConfig {
@@ -88,6 +99,50 @@ export interface FooterConfig {
     copyright: string
 }
 
+export interface PricingConfig {
+    title: string
+    items: {
+        name: string
+        price: string
+        unit: string
+        description: string
+        features: string[]
+        isRecommended: boolean
+        ctaText: string
+        ctaHref: string
+    }[]
+}
+
+export interface FaqConfig {
+    title: string
+    items: {
+        question: string
+        answer: string
+    }[]
+}
+
+export interface CompanyShowcaseConfig {
+    companyName: string
+    companyLogo: string
+    title: string
+    subtitle: string
+    stats: { icon: string; value: string; label: string }[]
+    highlights: string[]
+}
+
+export interface RecruitmentConfig {
+    title: string
+    subtitle: string
+    heroImage: string
+    tagline: string
+    positions: {
+        title: string
+        description: string
+        qualifications: string[]
+    }[]
+    benefits: { icon: string; title: string; description: string }[]
+}
+
 export interface ColorTheme {
     primary: string
     secondary: string
@@ -112,4 +167,5 @@ export interface ContentPreset {
     config: Partial<PageConfig>
 }
 
-export type TemplateType = 'professional' | 'premium' | 'minimal'
+export type TemplateType = 'professional' | 'premium' | 'minimal' | 'lighthouse'
+

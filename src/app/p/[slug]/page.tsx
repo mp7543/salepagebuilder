@@ -3,6 +3,8 @@ import { findPageBySlug } from '@/lib/db'
 import { ProfessionalTemplate } from '@/components/templates/professional'
 import { PremiumTemplate } from '@/components/templates/premium'
 import { MinimalTemplate } from '@/components/templates/minimal'
+import { LighthouseTemplate } from '@/components/templates/lighthouse'
+import { PageTracker } from '@/components/PageTracker'
 import { templateColorPresets } from '@/lib/presets/colors'
 import { genericPreset } from '@/lib/presets/content'
 
@@ -33,9 +35,11 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
 
     return (
         <>
+            <PageTracker pageId={page.id} />
             {page.template === 'professional' && <ProfessionalTemplate {...props} />}
             {page.template === 'premium' && <PremiumTemplate {...props} />}
             {page.template === 'minimal' && <MinimalTemplate {...props} />}
+            {page.template === 'lighthouse' && <LighthouseTemplate {...props} />}
         </>
     )
 }
@@ -49,8 +53,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     let config: any = {}
     try { config = JSON.parse(page.config) } catch { }
 
+    const seo = config.seo || {}
+    const title = seo.metaTitle || config.hero?.name || page.title || 'Sale Page'
+    const description = seo.metaDescription || config.hero?.title || 'Sale Page'
+
     return {
-        title: config.hero?.name || page.title,
-        description: config.hero?.title || 'Sale Page',
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            ...(seo.ogImage ? { images: [{ url: seo.ogImage, width: 1200, height: 630 }] } : {}),
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            ...(seo.ogImage ? { images: [seo.ogImage] } : {}),
+        },
     }
 }

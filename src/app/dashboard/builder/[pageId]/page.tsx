@@ -3,23 +3,26 @@
 import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { ArrowLeft, Save, Eye, Palette, Type, Layout, Star, Image, MessageSquare, Phone, Award, BarChart3, Loader2, Globe, ChevronRight, Check, Home, Lock, Crown, Zap, ArrowRight, Menu, X, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Save, Eye, Palette, Type, Layout, Star, Image, MessageSquare, Phone, Award, BarChart3, Loader2, Globe, ChevronRight, Check, Home, Lock, Crown, Zap, ArrowRight, Menu, X, ChevronUp, Undo2, Redo2, Monitor, Smartphone, Search } from 'lucide-react'
 import { brandPresets, templateColorPresets } from '@/lib/presets/colors'
-import { financialPreset, realestatePreset, genericPreset } from '@/lib/presets/content'
+import { financialPreset, realestatePreset, genericPreset, accountingPreset } from '@/lib/presets/content'
 import { PageConfig, ColorTheme, TemplateType } from '@/lib/types'
 import { ProfessionalTemplate } from '@/components/templates/professional'
 import { PremiumTemplate } from '@/components/templates/premium'
 import { MinimalTemplate } from '@/components/templates/minimal'
+import { LighthouseTemplate } from '@/components/templates/lighthouse'
 
 const TEMPLATE_OPTIONS: { id: TemplateType; name: string; subtitle: string; themeLabel: string; themeColor: string; previewBg: string; previewAccent: string; icon: string }[] = [
     { id: 'professional', name: 'นักวางแผนการเงิน', subtitle: 'Financial Planner', themeLabel: 'Emerald Green', themeColor: '#10b981', previewBg: '#ecfdf5', previewAccent: '#10b981', icon: '💰' },
     { id: 'premium', name: 'นายหน้าอสังหาริมทรัพย์', subtitle: 'Real Estate Agent', themeLabel: 'Ocean Blue', themeColor: '#3b82f6', previewBg: '#eff6ff', previewAccent: '#3b82f6', icon: '🏠' },
     { id: 'minimal', name: 'ฟรีแลนซ์ / ทั่วไป', subtitle: 'Freelancer / General', themeLabel: 'Pure White', themeColor: '#6366f1', previewBg: '#f5f3ff', previewAccent: '#6366f1', icon: '✏️' },
+    { id: 'lighthouse', name: 'สำนักงานบัญชี / SME', subtitle: 'Accounting Firm / SME', themeLabel: 'Lighthouse Blue', themeColor: '#1E69DE', previewBg: '#EFF6FF', previewAccent: '#1E69DE', icon: '🏢' },
 ]
 
 const CONTENT_PRESETS = [
     { id: 'financial', name: 'นักวางแผนการเงิน', icon: '💰', preset: financialPreset },
     { id: 'realestate', name: 'นายหน้าอสังหา', icon: '🏠', preset: realestatePreset },
+    { id: 'accounting', name: 'สำนักงานบัญชี', icon: '🏢', preset: accountingPreset },
     { id: 'generic', name: 'กำหนดเอง', icon: '✏️', preset: genericPreset },
 ]
 
@@ -29,9 +32,14 @@ const SECTIONS = [
     { id: 'stats', name: 'ตัวเลข', icon: <BarChart3 size={15} /> },
     { id: 'values', name: 'คุณค่า', icon: <Award size={15} /> },
     { id: 'services', name: 'บริการ', icon: <Type size={15} /> },
+    { id: 'pricing', name: 'แพ็กเกจ', icon: <Star size={15} /> },
     { id: 'testimonials', name: 'รีวิว', icon: <MessageSquare size={15} /> },
+    { id: 'faq', name: 'FAQ', icon: <MessageSquare size={15} /> },
     { id: 'cta', name: 'CTA', icon: <Eye size={15} /> },
     { id: 'contact', name: 'ติดต่อ', icon: <Phone size={15} /> },
+    { id: 'companyShowcase', name: 'บริษัท/พาร์ทเนอร์', icon: <Award size={15} /> },
+    { id: 'recruitment', name: 'รับสมัครทีม', icon: <Star size={15} /> },
+    { id: 'seo', name: 'SEO', icon: <Search size={15} /> },
     { id: 'colors', name: 'สีธีม', icon: <Palette size={15} /> },
 ]
 
@@ -128,6 +136,51 @@ function Toast({ message, type = 'success', onClose }: { message: string; type?:
     )
 }
 
+/* ─── Confetti component ─── */
+function ConfettiOverlay({ onDone }: { onDone: () => void }) {
+    useEffect(() => {
+        const timer = setTimeout(onDone, 3000)
+        return () => clearTimeout(timer)
+    }, [onDone])
+
+    const confettiPieces = Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 0.5,
+        duration: 1.5 + Math.random() * 2,
+        color: ['#7c3aed', '#06b6d4', '#f472b6', '#4ade80', '#fbbf24', '#3b82f6'][Math.floor(Math.random() * 6)],
+        size: 4 + Math.random() * 6,
+        rotation: Math.random() * 360,
+    }))
+
+    return (
+        <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
+            {/* Success message */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 animate-bounce text-center">
+                <div className="text-5xl sm:text-6xl mb-3">🎉</div>
+                <div className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">เผยแพร่สำเร็จ!</div>
+            </div>
+            {confettiPieces.map(p => (
+                <div
+                    key={p.id}
+                    style={{
+                        position: 'absolute',
+                        left: `${p.left}%`,
+                        top: '-10px',
+                        width: p.size,
+                        height: p.size * 1.6,
+                        background: p.color,
+                        borderRadius: '2px',
+                        animation: `confettiFall ${p.duration}s ease-in ${p.delay}s forwards`,
+                        transform: `rotate(${p.rotation}deg)`,
+                        opacity: 0.9,
+                    }}
+                />
+            ))}
+        </div>
+    )
+}
+
 interface SubData {
     tier: string
     endDate: string
@@ -159,6 +212,17 @@ export default function BuilderPage() {
     const [mobileSectionListOpen, setMobileSectionListOpen] = useState(false)
     const [toastMsg, setToastMsg] = useState<string | null>(null)
     const [toastType, setToastType] = useState<'success' | 'error'>('success')
+
+    // Undo/Redo history
+    const [history, setHistory] = useState<PageConfig[]>([])
+    const [historyIndex, setHistoryIndex] = useState(-1)
+    const isUndoRedo = useRef(false)
+
+    // Preview viewport toggle
+    const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop')
+
+    // Confetti
+    const [showConfetti, setShowConfetti] = useState(false)
 
     // Tier helpers
     const tier = (subscription?.tier || 'free') as 'free' | 'pro' | 'premium'
@@ -230,6 +294,40 @@ export default function BuilderPage() {
         }))
     }
 
+    // Undo/Redo: track config changes in history
+    useEffect(() => {
+        if (isUndoRedo.current) {
+            isUndoRedo.current = false
+            return
+        }
+        setHistory(prev => {
+            const newHistory = [...prev.slice(0, historyIndex + 1), config].slice(-30)
+            setHistoryIndex(newHistory.length - 1)
+            return newHistory
+        })
+    }, [config])
+
+    const undo = () => {
+        if (historyIndex <= 0) return
+        isUndoRedo.current = true
+        const newIndex = historyIndex - 1
+        setHistoryIndex(newIndex)
+        setConfig(history[newIndex])
+        showToast('Undo สำเร็จ')
+    }
+
+    const redo = () => {
+        if (historyIndex >= history.length - 1) return
+        isUndoRedo.current = true
+        const newIndex = historyIndex + 1
+        setHistoryIndex(newIndex)
+        setConfig(history[newIndex])
+        showToast('Redo สำเร็จ')
+    }
+
+    const canUndo = historyIndex > 0
+    const canRedo = historyIndex < history.length - 1
+
     const updateArrayItem = (section: keyof PageConfig, index: number, key: string, value: any) => {
         setConfig(prev => {
             const sectionData = prev[section] as any
@@ -248,6 +346,9 @@ export default function BuilderPage() {
         })
         setIsPublished(true)
         setSaving(false)
+        if (!isPublished) {
+            setShowConfetti(true)
+        }
         showToast(isPublished ? 'บันทึกเรียบร้อย ✓' : 'เผยแพร่เรียบร้อย 🎉')
     }
 
@@ -266,6 +367,7 @@ export default function BuilderPage() {
             case 'professional': return <ProfessionalTemplate {...props} />
             case 'premium': return <PremiumTemplate {...props} />
             case 'minimal': return <MinimalTemplate {...props} />
+            case 'lighthouse': return <LighthouseTemplate {...props} />
         }
     }
 
@@ -275,6 +377,46 @@ export default function BuilderPage() {
 
     const renderSectionEditor = () => {
         switch (activeSection) {
+            case 'seo':
+                const seo = config.seo || { metaTitle: '', metaDescription: '', ogImage: '' }
+                return (
+                    <div className="space-y-4">
+                        <div className="p-3 rounded-xl" style={{ background: '#f0f9ff', border: '1px solid #bae6fd' }}>
+                            <p className="text-xs text-blue-600 font-medium mb-1">🔍 SEO Settings</p>
+                            <p className="text-[10px] text-blue-500 leading-relaxed">ตั้งค่าให้เพจติดอันดับ Google — ระบุ Title, Description และรูป OG Image</p>
+                        </div>
+                        <label className="block">
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">Meta Title</span>
+                            <input type="text" value={seo.metaTitle} onChange={e => {
+                                setConfig(prev => ({ ...prev, seo: { ...seo, metaTitle: e.target.value } }))
+                            }} className={inp} style={inpStyle} placeholder="ชื่อเพจที่แสดงบน Google" />
+                            <span className="text-[10px] text-gray-400 mt-1 block">{seo.metaTitle.length}/60 ตัวอักษร</span>
+                        </label>
+                        <label className="block">
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">Meta Description</span>
+                            <textarea value={seo.metaDescription} onChange={e => {
+                                setConfig(prev => ({ ...prev, seo: { ...seo, metaDescription: e.target.value } }))
+                            }} className={inp} style={{ ...inpStyle, minHeight: 80, resize: 'vertical' as any }} placeholder="คำอธิบายเพจ สำหรับ Google" />
+                            <span className="text-[10px] text-gray-400 mt-1 block">{seo.metaDescription.length}/160 ตัวอักษร</span>
+                        </label>
+                        <label className="block">
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">OG Image URL</span>
+                            <input type="text" value={seo.ogImage} onChange={e => {
+                                setConfig(prev => ({ ...prev, seo: { ...seo, ogImage: e.target.value } }))
+                            }} className={inp} style={inpStyle} placeholder="https://example.com/og-image.jpg" />
+                            <span className="text-[10px] text-gray-400 mt-1 block">รูปที่แสดงเมื่อแชร์ลิงก์ (1200×630px แนะนำ)</span>
+                        </label>
+                        {/* Google preview */}
+                        <div className="mt-2">
+                            <p className="text-xs text-gray-400 font-medium mb-2">ตัวอย่างบน Google</p>
+                            <div className="p-3 rounded-lg" style={{ background: 'white', border: '1px solid #e2e8f0' }}>
+                                <p className="text-xs text-green-700 truncate">{typeof window !== 'undefined' ? window.location.origin : ''}/p/{pageSlug || 'your-page'}</p>
+                                <p className="text-sm font-medium text-blue-700 mt-0.5 truncate">{seo.metaTitle || config.hero?.name || 'Sale Page Title'}</p>
+                                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{seo.metaDescription || config.hero?.title || 'คำอธิบายเพจ...'}</p>
+                            </div>
+                        </div>
+                    </div>
+                )
             case 'colors':
                 return (
                     <div className="space-y-5">
@@ -383,6 +525,62 @@ export default function BuilderPage() {
                             <input type="text" value={config.navbar?.ctaText || ''} onChange={e => updateConfig('navbar', 'ctaText', e.target.value)}
                                 className={inp} style={inpStyle} />
                         </label>
+                    </div>
+                )
+            case 'pricing':
+                const pricing = config.pricing || { title: '', items: [] }
+                return (
+                    <div className="space-y-3">
+                        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">แก้ไขแพ็กเกจ</p>
+                        <label className="block">
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">หัวข้อ</span>
+                            <input type="text" value={pricing.title} onChange={e => {
+                                setConfig(prev => ({ ...prev, pricing: { ...pricing, title: e.target.value } }))
+                            }} className={inp} style={inpStyle} />
+                        </label>
+                        {pricing.items?.map((pkg: any, i: number) => (
+                            <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: pkg.isRecommended ? '#eff6ff' : '#f8fafc', border: `1px solid ${pkg.isRecommended ? '#93c5fd' : '#e2e8f0'}` }}>
+                                <span className="text-xs text-gray-400 font-medium">แพ็กเกจ #{i + 1} {pkg.isRecommended && '⭐'}</span>
+                                <input type="text" value={pkg.name} onChange={e => {
+                                    const items = [...pricing.items]; items[i] = { ...items[i], name: e.target.value }
+                                    setConfig(prev => ({ ...prev, pricing: { ...pricing, items } }))
+                                }} className={inp} style={inpStyle} placeholder="ชื่อแพ็กเกจ" />
+                                <input type="text" value={pkg.price} onChange={e => {
+                                    const items = [...pricing.items]; items[i] = { ...items[i], price: e.target.value }
+                                    setConfig(prev => ({ ...prev, pricing: { ...pricing, items } }))
+                                }} className={inp} style={inpStyle} placeholder="ราคา" />
+                                <input type="text" value={pkg.description} onChange={e => {
+                                    const items = [...pricing.items]; items[i] = { ...items[i], description: e.target.value }
+                                    setConfig(prev => ({ ...prev, pricing: { ...pricing, items } }))
+                                }} className={inp} style={inpStyle} placeholder="คำอธิบาย" />
+                            </div>
+                        ))}
+                    </div>
+                )
+            case 'faq':
+                const faq = config.faq || { title: '', items: [] }
+                return (
+                    <div className="space-y-3">
+                        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">แก้ไข FAQ</p>
+                        <label className="block">
+                            <span className="text-xs text-gray-500 mb-1 block font-medium">หัวข้อ</span>
+                            <input type="text" value={faq.title} onChange={e => {
+                                setConfig(prev => ({ ...prev, faq: { ...faq, title: e.target.value } }))
+                            }} className={inp} style={inpStyle} />
+                        </label>
+                        {faq.items?.map((item: any, i: number) => (
+                            <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                                <span className="text-xs text-gray-400 font-medium">คำถาม #{i + 1}</span>
+                                <input type="text" value={item.question} onChange={e => {
+                                    const items = [...faq.items]; items[i] = { ...items[i], question: e.target.value }
+                                    setConfig(prev => ({ ...prev, faq: { ...faq, items } }))
+                                }} className={inp} style={inpStyle} placeholder="คำถาม" />
+                                <textarea value={item.answer} onChange={e => {
+                                    const items = [...faq.items]; items[i] = { ...items[i], answer: e.target.value }
+                                    setConfig(prev => ({ ...prev, faq: { ...faq, items } }))
+                                }} className={inp} style={{ ...inpStyle, minHeight: 60, resize: 'vertical' as any }} placeholder="คำตอบ" />
+                            </div>
+                        ))}
                     </div>
                 )
             default:
@@ -517,9 +715,9 @@ export default function BuilderPage() {
                                 key={opt.id}
                                 opt={opt}
                                 isSelected={template === opt.id}
-                                locked={!canUseAllTemplates && opt.id !== 'professional'}
+                                locked={!canUseAllTemplates && opt.id !== 'professional' && opt.id !== 'lighthouse'}
                                 onSelect={() => {
-                                    if (!canUseAllTemplates && opt.id !== 'professional') {
+                                    if (!canUseAllTemplates && opt.id !== 'professional' && opt.id !== 'lighthouse') {
                                         setShowUpgradeHint('template')
                                         return
                                     }
@@ -528,6 +726,7 @@ export default function BuilderPage() {
                                     const preset = CONTENT_PRESETS.find(p =>
                                         (opt.id === 'professional' && p.id === 'financial') ||
                                         (opt.id === 'premium' && p.id === 'realestate') ||
+                                        (opt.id === 'lighthouse' && p.id === 'accounting') ||
                                         p.id === 'generic'
                                     )
                                     if (preset) applyContentPreset(preset.preset)
@@ -602,6 +801,30 @@ export default function BuilderPage() {
                             <Loader2 size={10} className="animate-spin" /> <span className="hidden sm:inline">บันทึก...</span>
                         </span>
                     )}
+                    {/* Undo / Redo */}
+                    <div className="hidden sm:flex items-center gap-0.5 border border-gray-200 rounded-lg">
+                        <button onClick={undo} disabled={!canUndo}
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" title="Undo">
+                            <Undo2 size={14} />
+                        </button>
+                        <div className="w-px h-4 bg-gray-200" />
+                        <button onClick={redo} disabled={!canRedo}
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" title="Redo">
+                            <Redo2 size={14} />
+                        </button>
+                    </div>
+                    {/* Preview toggle */}
+                    <div className="hidden md:flex items-center gap-0.5 border border-gray-200 rounded-lg">
+                        <button onClick={() => setPreviewMode('desktop')}
+                            className={`p-1.5 sm:p-2 transition-colors rounded-l-lg ${previewMode === 'desktop' ? 'bg-gray-100 text-gray-800' : 'text-gray-400 hover:text-gray-600'}`} title="Desktop">
+                            <Monitor size={14} />
+                        </button>
+                        <div className="w-px h-4 bg-gray-200" />
+                        <button onClick={() => setPreviewMode('mobile')}
+                            className={`p-1.5 sm:p-2 transition-colors rounded-r-lg ${previewMode === 'mobile' ? 'bg-gray-100 text-gray-800' : 'text-gray-400 hover:text-gray-600'}`} title="Mobile">
+                            <Smartphone size={14} />
+                        </button>
+                    </div>
                     {isPublished && pageSlug && (
                         <a href={`/p/${pageSlug}`} target="_blank"
                             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all border border-gray-200">
@@ -668,7 +891,7 @@ export default function BuilderPage() {
 
                 {/* RIGHT: Preview */}
                 <div ref={previewRef} className="flex-1 overflow-y-auto" style={{ background: '#e2e8f0' }}>
-                    <div className="min-h-full shadow-xl" style={{ margin: '0 auto' }}>
+                    <div className="min-h-full shadow-xl transition-all duration-300 ease-in-out" style={{ maxWidth: previewMode === 'mobile' ? '390px' : '100%', margin: '0 auto' }}>
                         {renderTemplatePreview()}
                     </div>
                 </div>
@@ -754,6 +977,9 @@ export default function BuilderPage() {
             {toastMsg && (
                 <Toast message={toastMsg} type={toastType} onClose={() => setToastMsg(null)} />
             )}
+
+            {/* ── Confetti on first publish ── */}
+            {showConfetti && <ConfettiOverlay onDone={() => setShowConfetti(false)} />}
         </div>
     )
 }

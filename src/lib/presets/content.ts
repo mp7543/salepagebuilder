@@ -18,7 +18,7 @@ export const financialPreset: Partial<PageConfig> = {
         subtitle: 'Smart Planning | Secure Future',
         quote: '"ผมเชื่อว่านักวางแผนการเงินที่ดี...มีอยู่จริง"',
         credentials: 'CFP® Certified Financial Planner',
-        imageUrl: '',
+        imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80',
         ctaPrimary: { text: 'นัดปรึกษาฟรี', href: '#contact' },
         ctaSecondary: { text: 'ดูบริการ', href: '#services' },
         socialLinks: [
@@ -97,6 +97,55 @@ export const financialPreset: Partial<PageConfig> = {
             { text: 'ติดต่อ', href: '#contact' },
         ],
         copyright: '© 2026 KarnWealth. All rights reserved.',
+    },
+    companyShowcase: {
+        companyName: 'บริษัทของคุณ',
+        companyLogo: '',
+        title: 'ทำไมต้องเลือกเรา?',
+        subtitle: 'บริษัทชั้นนำที่ลูกค้าไว้วางใจ',
+        stats: [
+            { icon: '📈', value: '+2.5%', label: 'เบี้ยรายใหม่เติบโต' },
+            { icon: '📊', value: '+1.0%', label: 'เบี้ยประกันภัยรวมเติบโต' },
+            { icon: '🏥', value: '+2%', label: 'แนวโน้ม ค่ารักษาพยาบาลสูงขึ้น' },
+        ],
+        highlights: [
+            'ครองส่วนแบ่งการตลาดมากที่สุดในประเทศไทย',
+            'ลูกค้าไว้วางใจนานกว่า 87 ปี',
+            'มีจำนวนลูกค้าบุคคลมากกว่า 5 ล้านคน',
+            'มีจำนวนตัวแทนกว่า 50,000 คน',
+            'มีลูกค้าองค์กรกว่า 13,000 องค์กร',
+        ],
+    },
+    recruitment: {
+        title: 'ตำแหน่งที่เปิดรับ',
+        subtitle: 'ร่วมทีมกับเราวันนี้',
+        heroImage: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80',
+        tagline: 'INCOME · INDEPENDENT · IMPACT · IMPROVE',
+        positions: [
+            {
+                title: 'ที่ปรึกษาการเงิน (FA Prime)',
+                description: 'ทำอาชีพนี้ให้เติบโตและยั่งยืน อยากท้าทายความสามารถตัวเอง',
+                qualifications: ['จบปริญญาตรีขึ้นไป', 'มี License ที่เกี่ยวข้อง', 'ประสบการณ์ด้านการเงิน 2 ปีขึ้นไป'],
+            },
+            {
+                title: 'ที่ปรึกษาการเงิน (Standard)',
+                description: 'เรียนลัดการเป็นที่ปรึกษาการเงิน เหมาะสำหรับคนที่อยากเริ่มต้น',
+                qualifications: ['จบปริญญาตรีขึ้นไป', 'มีเป้าหมายและวินัยสม่ำเสมอ'],
+            },
+            {
+                title: 'ผู้บริหารทีม',
+                description: 'สำหรับผู้ที่ต้องการเป็นผู้บริหารหน่วย และเคยทำงานฝ่ายบริหารระดับสูง',
+                qualifications: ['มี License ที่เกี่ยวข้อง', 'ประสบการณ์ด้านการเงิน 8 ปีขึ้นไป', 'เคยเป็นหัวหน้าทีม'],
+            },
+        ],
+        benefits: [
+            { icon: '💰', title: 'คอมมิชชัน', description: 'รายได้จากปีแรกและปีต่อๆ ไป' },
+            { icon: '🎁', title: 'โบนัส', description: 'โบนัสรายเดือน รายไตรมาส รายปี' },
+            { icon: '✈️', title: 'ท่องเที่ยว', description: 'ในประเทศและต่างประเทศ' },
+            { icon: '📈', title: 'Career Benefit', description: 'ผลประโยชน์จากอาชีพ' },
+            { icon: '🔒', title: 'กองทุนสำรอง', description: 'Security Fund' },
+            { icon: '🏢', title: 'สิทธิพิเศษ', description: 'โปรแกรมพิเศษสำหรับตัวแทน' },
+        ],
     },
 }
 
@@ -298,3 +347,167 @@ export const genericPreset: Partial<PageConfig> = {
         copyright: '© 2026 MyBrand. All rights reserved.',
     },
 }
+
+export const accountingPreset: Partial<PageConfig> = {
+    navbar: {
+        logo: 'Lighthouse Ledger',
+        links: [
+            { text: 'บริการ', href: '#services' },
+            { text: 'แพ็กเกจ', href: '#pricing' },
+            { text: 'ทำไมเลือกเรา', href: '#whychoose' },
+            { text: 'FAQ', href: '#faq' },
+        ],
+        ctaText: 'โทร 088-596-3245',
+        ctaHref: 'tel:0885963245',
+    },
+    hero: {
+        name: 'ทำบัญชีให้ถูกต้อง เพื่อให้คุณกล้าเติบโตอย่างเต็มศักยภาพ',
+        title: 'สำนักงานบัญชีและสอบบัญชีสำหรับธุรกิจ SME',
+        subtitle: 'เราเชื่อว่า "การเสียภาษีอย่างถูกต้อง" ไม่ใช่ภาระ แต่คือสัญญาณของความมั่งคั่งและความรับผิดชอบต่อประเทศ',
+        quote: '"เราไม่ได้ทำบัญชีเพื่อให้คุณเสียภาษีน้อยที่สุด แต่ทำบัญชีเพื่อให้คุณกล้าหารายได้ให้มากที่สุด"',
+        credentials: 'CPA Certified | สำนักงานบัญชีมืออาชีพ',
+        imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80',
+        ctaPrimary: { text: 'ปรึกษาฟรีก่อนจดบริษัท', href: '#contact' },
+        ctaSecondary: { text: 'ดูแพ็กเกจ', href: '#pricing' },
+        socialLinks: [
+            { platform: 'facebook', url: 'https://facebook.com' },
+            { platform: 'line', url: 'https://line.me' },
+        ],
+    },
+    stats: {
+        items: [
+            { value: '500+', label: 'บริษัทที่ดูแล' },
+            { value: '10+', label: 'ปีประสบการณ์' },
+            { value: 'CPA', label: 'ผู้สอบบัญชีรับอนุญาต' },
+            { value: '99%', label: 'ลูกค้าพึงพอใจ' },
+        ],
+    },
+    values: {
+        title: 'เริ่มต้นธุรกิจอย่างถูกต้องตั้งแต่วันแรก',
+        subtitle: 'ปัญหาที่นักธุรกิจเจอบ่อย',
+        items: [
+            { icon: '📊', title: 'บัญชีไม่ชัดเจน → ตัดสินใจได้ยาก', description: 'เมื่อข้อมูลทางการเงินไม่ครบ ไม่อัปเดต หรือไม่มีการจัดหมวดหมู่ที่ชัดเจน เจ้าของธุรกิจจะไม่รู้ภาพรวมแท้จริงของบริษัท', imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80' },
+            { icon: '😰', title: 'ไม่มั่นใจว่าตัวเลขถูกต้อง → กลัวเสี่ยง', description: 'แม้มีรายงานบัญชี แต่ถ้าเจ้าของไม่เชื่อมั่นในความถูกต้องของข้อมูล ความกลัวจะเข้ามาแทนที่ความกล้า', imageUrl: 'https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=400&q=80' },
+            { icon: '🤷', title: 'ไม่รู้ว่าต้องเตรียมอะไรสำหรับการเติบโต', description: 'การเติบโตไม่ใช่แค่ยอดขายเพิ่ม แต่ต้องเตรียมหลายด้าน เมื่อไม่มีใครช่วยวางแผนเชิงโครงสร้าง', imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80' },
+            { icon: '🔢', title: 'ไม่มีใครอธิบายตัวเลขให้เข้าใจจริง ๆ', description: 'หลายธุรกิจมีนักบัญชีทำงานให้ แต่ไม่มีที่ปรึกษาที่ช่วย "แปลตัวเลข" เป็นกลยุทธ์', imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80' },
+        ],
+    },
+    services: {
+        label: 'SERVICES HUB',
+        title: 'บริการของเรา',
+        items: [
+            { icon: '📋', title: 'ทำบัญชีรายเดือน', description: 'บันทึกบัญชีเป็นระบบ ยื่นภาษีตรงเวลา รายงานที่ใช้ตัดสินใจได้', imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80' },
+            { icon: '✨', title: 'วางแผนภาษี', description: 'วางแผนภาษีอย่างชาญฉลาดภายใต้กฎหมาย', imageUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80' },
+            { icon: '🔍', title: 'สอบบัญชี (CPA)', description: 'ตรวจสอบตามมาตรฐาน ยืนยันความน่าเชื่อถือ', imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&q=80' },
+        ],
+    },
+    testimonials: {
+        title: 'ทำไมนักธุรกิจรุ่นใหม่เลือก LHL',
+        items: [
+            { name: 'คุณกมล', role: 'เจ้าของธุรกิจ E-Commerce', quote: 'ทำบัญชีโปร่งใส เข้าใจง่าย ช่วยให้กล้าตัดสินใจขยายธุรกิจ', avatar: 'K', rating: 5 },
+            { name: 'คุณพิม', role: 'Startup Founder', quote: 'จัดระบบบัญชีตั้งแต่วันแรก ทำให้ไม่ต้องกลัวเรื่องภาษี', avatar: 'P', rating: 5 },
+            { name: 'คุณธน', role: 'ผู้บริหาร SME', quote: 'อธิบายตัวเลขได้เข้าใจง่าย ใช้วางแผนธุรกิจได้จริง', avatar: 'T', rating: 5 },
+        ],
+    },
+    whyChoose: {
+        title: 'Value Propositions',
+        subtitle: 'LHL คือพาร์ทเนอร์ด้านบัญชีและภาษีของนักธุรกิจที่อยากเติบโตอย่างยั่งยืน',
+        items: [
+            { icon: '✅', title: 'ทำบัญชีแบบโปร่งใส', description: 'เล่มเดียว เพื่อการตัดสินใจที่แม่นยำ' },
+            { icon: '✅', title: 'วางแผนภาษีภายใต้กฎหมาย', description: 'ปลอดภัยระยะยาว' },
+            { icon: '✅', title: 'อธิบายตัวเลขให้ CEO เข้าใจ', description: 'ใช้งานได้จริง' },
+            { icon: '✅', title: 'มีบริการสอบบัญชีโดยผู้สอบบัญชีรับอนุญาต (CPA)', description: 'ได้มาตรฐาน' },
+            { icon: '✅', title: 'วางระบบตั้งแต่ต้น', description: 'เพื่อรองรับการเติบโต' },
+            { icon: '✅', title: 'ทำงานแบบระยะยาว', description: 'เป็นทีมเดียวกันกับคุณ' },
+        ],
+    },
+    pricing: {
+        title: 'แพ็กเกจจดทะเบียนบริษัท',
+        items: [
+            {
+                name: 'Start Right',
+                price: '10,900',
+                unit: 'บาท',
+                description: 'เหมาะสำหรับ: ผู้เริ่มต้นธุรกิจ',
+                features: [
+                    'จดทะเบียนบริษัทจำกัด',
+                    'แนะนำโครงสร้างเบื้องต้น',
+                    'คำแนะนำหน้าที่ด้านบัญชีและภาษีหลังเปิดบริษัท',
+                    'ระยะเวลา: 7-14 วันทำการ',
+                ],
+                isRecommended: false,
+                ctaText: 'ปรึกษาฟรี →',
+                ctaHref: '#contact',
+            },
+            {
+                name: 'Business Ready',
+                price: '13,900',
+                unit: 'บาท',
+                description: 'เหมาะสำหรับ: นักธุรกิจที่คิดไกลกว่า "เปิดให้ผ่าน"',
+                features: [
+                    'ทุกอย่างใน Start Right',
+                    'จด VAT (ถ้ามี)',
+                    'วางโครงสร้างบัญชีเริ่มต้น',
+                    'แนะนำระบบบัญชี SME',
+                    'เชื่อมต่อกับบริการทำบัญชีรายเดือนได้ทันที',
+                    'ระยะเวลา: 10-14 วันทำการ',
+                ],
+                isRecommended: true,
+                ctaText: 'ปรึกษาฟรี →',
+                ctaHref: '#contact',
+            },
+            {
+                name: 'Growth Foundation',
+                price: '20,000',
+                unit: 'ค่าบริการเริ่มต้น',
+                description: 'เหมาะสำหรับ: ธุรกิจที่มองการเติบโตจริงจัง',
+                features: [
+                    'ทุกอย่างใน Business Ready',
+                    'วางแผนภาษีเบื้องต้น',
+                    'เตรียมระบบรองรับบัญชีและการสอบบัญชี',
+                    'ให้คำปรึกษาโครงสร้างธุรกิจเชิงกลยุทธ์',
+                    'ระยะเวลา: 14-21 วันทำการ',
+                ],
+                isRecommended: false,
+                ctaText: 'ปรึกษาฟรี →',
+                ctaHref: '#contact',
+            },
+        ],
+    },
+    faq: {
+        title: 'คำถามที่พบบ่อย',
+        items: [
+            { question: 'ต้องทำบัญชีทันทีหลังจดบริษัทไหม?', answer: 'ใช่ เพราะบริษัทมีหน้าที่ทางบัญชีและภาษีตั้งแต่เดือนแรก แต่ไม่ต้องกังวล เราช่วยคุณจัดระบบตั้งแต่ต้น' },
+            { question: 'ถ้ายังไม่มีรายได้ ต้องจด VAT ไหม?', answer: 'ยังไม่จำเป็น แต่ถ้ารายได้เกิน 1.8 ล้านบาท/ปี ต้องจดทะเบียน VAT ตามกฎหมาย' },
+            { question: 'ใช้เวลานานแค่ไหนถึงจดบริษัทเสร็จ?', answer: 'โดยปกติ 7-14 วันทำการ ขึ้นอยู่กับแพ็กเกจและความซับซ้อนของธุรกิจ' },
+            { question: 'ทำไมต้องมีผู้สอบบัญชี?', answer: 'บริษัทจำกัดทุกแห่งต้องมีผู้สอบบัญชีรับอนุญาต (CPA) ตรวจสอบงบการเงินประจำปีตามกฎหมาย' },
+            { question: 'LHL ต่างจากสำนักงานบัญชีทั่วไปอย่างไร?', answer: 'เราไม่ใช่แค่ทำบัญชี แต่เป็นพาร์ทเนอร์ที่ช่วยให้คุณเข้าใจตัวเลข วางแผนภาษี และเติบโตอย่างมั่นใจ' },
+        ],
+    },
+    cta: {
+        title: 'ถ้าคุณอยากโฟกัสที่ "การสร้างรายได้" เรื่องบัญชีและภาษี ฝากไว้กับเรา',
+        subtitle: 'ปรึกษาฟรีกับ Lighthouse Ledger',
+        buttonText: 'ปรึกษาฟรี',
+        buttonHref: '#contact',
+    },
+    contact: {
+        title: 'ติดต่อเรา',
+        subtitle: 'พร้อมให้คำปรึกษาด้านบัญชีและภาษี',
+        email: 'contact@lighthouseledger.co.th',
+        phone: '088-596-3245',
+        line: '@lighthouseledger',
+        address: 'กรุงเทพมหานคร',
+    },
+    footer: {
+        logo: 'Lighthouse Ledger',
+        description: 'สำนักงานบัญชีและสอบบัญชีสำหรับธุรกิจ SME ที่อยากเติบโตอย่างถูกต้อง',
+        links: [
+            { text: 'บริการ', href: '#services' },
+            { text: 'แพ็กเกจ', href: '#pricing' },
+            { text: 'FAQ', href: '#faq' },
+            { text: 'ติดต่อ', href: '#contact' },
+        ],
+        copyright: '© 2026 Lighthouse Ledger. All rights reserved.',
+    },
+}
+

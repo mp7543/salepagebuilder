@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { findPageByIdAndUser, updatePage, deletePage } from '@/lib/db'
+import { sendNotification } from '@/lib/notifications'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const session = await getServerSession(authOptions)
@@ -30,6 +31,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     const body = await req.json()
+    const wasPublished = !!page.isPublished
     const updated = updatePage(id, {
         title: body.title,
         template: body.template,
@@ -38,6 +40,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         isPublished: body.isPublished,
         slug: body.slug,
     })
+
+    // Send notification on first publish
+    if (body.isPublished && !wasPublished && session.user.email) {
+        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        sendNotification(session.user.email, 'publish_success', {
+            pageTitle: body.title || page.title || 'เพจใหม่',
+            pageUrl: `${baseUrl}/p/${updated?.slug || page.slug}`,
+        })
+    }
 
     return NextResponse.json(updated)
 }
