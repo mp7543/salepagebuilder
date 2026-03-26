@@ -1,6 +1,5 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Check, X, ArrowLeft, Loader2, Star, Crown, Zap, Sparkles } from 'lucide-react'
@@ -16,7 +15,6 @@ const COMPARISON = [
 ]
 
 export default function SubscriptionPage() {
-    const { data: session } = useSession()
     const router = useRouter()
     const [loading, setLoading] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)

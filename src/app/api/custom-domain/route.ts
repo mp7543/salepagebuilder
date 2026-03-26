@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getMockSession } from '@/lib/auth'
 import { findCustomDomainByDomain, findCustomDomainsByUser, createCustomDomain, deleteCustomDomain, findPageByIdAndUser } from '@/lib/db'
 
 export async function GET(req: NextRequest) {
@@ -16,22 +15,19 @@ export async function GET(req: NextRequest) {
     }
 
     // Otherwise → list user's custom domains
-    const session = await getServerSession(authOptions)
-    if (!(session?.user as any)?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-    const domains = findCustomDomainsByUser((session!.user as any).id)
+    const session = getMockSession()
+    const domains = findCustomDomainsByUser(session.user.id)
     return NextResponse.json(domains)
 }
 
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions)
-    if (!(session?.user as any)?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = getMockSession()
 
     const { pageId, domain } = await req.json()
     if (!pageId || !domain) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
 
     // Verify ownership
-    const page = findPageByIdAndUser(pageId, (session!.user as any).id)
+    const page = findPageByIdAndUser(pageId, session.user.id)
     if (!page) return NextResponse.json({ error: 'Page not found' }, { status: 404 })
 
     try {
@@ -43,9 +39,6 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-    const session = await getServerSession(authOptions)
-    if (!(session?.user as any)?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
     const { id } = await req.json()
     if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 

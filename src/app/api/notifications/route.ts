@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getMockSession } from '@/lib/auth'
 import { sendNotification, getRecentNotifications } from '@/lib/notifications'
 
 export async function GET() {
-    const session = await getServerSession(authOptions)
-    if (!(session?.user as any)?.id) {
+    const session = getMockSession()
+    if (!session.user.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -14,13 +13,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    const session = await getServerSession(authOptions)
-    if (!(session?.user as any)?.id) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const session = getMockSession()
 
     const { type, data } = await req.json()
-    const email = session!.user?.email || ''
+    const email = session.user.email || ''
     const result = sendNotification(email, type, data)
 
     return NextResponse.json({ sent: !!result })

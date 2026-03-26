@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getMockSession } from '@/lib/auth'
 import { findPageByIdAndUser, updatePage, deletePage } from '@/lib/db'
 import { sendNotification } from '@/lib/notifications'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const session = getMockSession()
 
     const { id } = await params
-    const page = findPageByIdAndUser(id, (session.user as any).id)
+    const page = findPageByIdAndUser(id, session.user.id)
     if (!page) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
@@ -19,13 +15,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const session = getMockSession()
 
     const { id } = await params
-    const page = findPageByIdAndUser(id, (session.user as any).id)
+    const page = findPageByIdAndUser(id, session.user.id)
     if (!page) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
@@ -43,7 +36,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Send notification on first publish
     if (body.isPublished && !wasPublished && session.user.email) {
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        const baseUrl = process.env.NEXTAUTH_URL || process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:3000'
         sendNotification(session.user.email, 'publish_success', {
             pageTitle: body.title || page.title || 'เพจใหม่',
             pageUrl: `${baseUrl}/p/${updated?.slug || page.slug}`,
@@ -54,13 +47,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const session = getMockSession()
 
     const { id } = await params
-    const page = findPageByIdAndUser(id, (session.user as any).id)
+    const page = findPageByIdAndUser(id, session.user.id)
     if (!page) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }

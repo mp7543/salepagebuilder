@@ -1,6 +1,5 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Plus, Settings, Trash2, ExternalLink, Crown, LogOut, LayoutGrid, Zap, Star, ArrowRight, Globe, FileText, Clock, Lock, Eye, RefreshCw, Loader2, Info, Shield } from 'lucide-react'
@@ -48,7 +47,6 @@ const TEMPLATE_COLORS: Record<string, { primary: string; bg: string; accent: str
 }
 
 export default function DashboardPage() {
-    const { data: session, status } = useSession()
     const router = useRouter()
     const [pages, setPages] = useState<PageData[]>([])
     const [subscription, setSubscription] = useState<SubData | null>(null)
@@ -63,12 +61,8 @@ export default function DashboardPage() {
     const [dnsMessage, setDnsMessage] = useState<string | null>(null)
 
     useEffect(() => {
-        if (status === 'unauthenticated') router.push('/login')
-    }, [status, router])
-
-    useEffect(() => {
-        if (session) fetchData()
-    }, [session])
+        fetchData()
+    }, [])
 
     const fetchData = async () => {
         try {
@@ -171,7 +165,7 @@ export default function DashboardPage() {
             ? <Star size={16} className="text-purple-400" />
             : <Zap size={16} className="text-[var(--muted)]" />
 
-    if (status === 'loading' || loading) {
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
@@ -203,16 +197,10 @@ export default function DashboardPage() {
                         <button onClick={() => router.push('/admin')} className="hidden sm:flex items-center gap-1 text-sm text-[var(--muted)] hover:text-purple-400 transition-colors px-3 py-1.5" title="Admin Panel">
                             <Shield size={14} /> Admin
                         </button>
-                        {session?.user?.image && (
-                            <img src={session.user.image} alt="" className="w-8 h-8 rounded-full ring-2 ring-white/10" />
-                        )}
                         <div className="hidden sm:block">
-                            <p className="text-sm font-medium leading-tight">{session?.user?.name}</p>
-                            <p className="text-[10px] text-[var(--muted)]">{session?.user?.email}</p>
+                            <p className="text-sm font-medium leading-tight">Demo User</p>
+                            <p className="text-[10px] text-[var(--muted)]">demo@salepage.app</p>
                         </div>
-                        <button onClick={() => signOut({ callbackUrl: '/' })} className="p-2 rounded-lg btn-ghost text-[var(--muted)] hover:text-white transition-all" title="ออกจากระบบ">
-                            <LogOut size={17} />
-                        </button>
                     </div>
                 </div>
             </header>

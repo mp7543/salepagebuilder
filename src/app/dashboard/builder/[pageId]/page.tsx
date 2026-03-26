@@ -1,6 +1,5 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { ArrowLeft, Save, Eye, Palette, Type, Layout, Star, Image, MessageSquare, Phone, Award, BarChart3, Loader2, Globe, ChevronRight, Check, Home, Lock, Crown, Zap, ArrowRight, Menu, X, ChevronUp, Undo2, Redo2, Monitor, Smartphone, Search } from 'lucide-react'
@@ -188,7 +187,6 @@ interface SubData {
 }
 
 export default function BuilderPage() {
-    const { data: session, status } = useSession()
     const router = useRouter()
     const params = useParams()
     const pageId = params.pageId as string
@@ -235,15 +233,11 @@ export default function BuilderPage() {
     const canUseContentPresets = tier === 'pro' || tier === 'premium'
 
     useEffect(() => {
-        if (status === 'unauthenticated') router.push('/login')
-    }, [status, router])
-
-    useEffect(() => {
-        if (session && pageId) {
+        if (pageId) {
             loadPage()
             fetch('/api/subscription').then(r => r.ok ? r.json() : null).then(d => d && setSubscription(d)).catch(() => { })
         }
-    }, [session, pageId])
+    }, [pageId])
 
     const loadPage = async () => {
         const res = await fetch(`/api/pages/${pageId}`, { method: 'GET' }).catch(() => null)

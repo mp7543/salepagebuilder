@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getMockSession } from '@/lib/auth'
 import {
     isAdmin, getSystemStats, getAllUsers, getAllPages, getAllSubscriptions,
     getAllCustomDomains, getDailyViews, getTopPages, getTemplatePopularity,
@@ -9,9 +8,9 @@ import {
 } from '@/lib/db'
 import { sendNotification, getRecentNotifications, checkTrialNotifications } from '@/lib/notifications'
 
-async function checkAdmin() {
-    const session = await getServerSession(authOptions)
-    const email = session?.user?.email
+function checkAdmin() {
+    const session = getMockSession()
+    const email = session.user.email
     if (!email) return null
 
     // Allow first user as admin if no admin_emails configured
@@ -20,16 +19,16 @@ async function checkAdmin() {
     const envAdmins = process.env.ADMIN_EMAILS || ''
     const allAdmins = [adminEmails, envAdmins].join(',').split(',').map(e => e.trim()).filter(Boolean)
 
-    // If no admins configured, allow logged-in user (first-time setup)
+    // If no admins configured, allow demo user (first-time setup)
     if (allAdmins.length === 0 || isAdmin(email)) {
-        return { email, id: (session.user as any).id }
+        return { email, id: session.user.id }
     }
     return null
 }
 
 // GET /api/admin?action=stats|users|pages|subscriptions|domains|analytics|settings|notifications
 export async function GET(req: NextRequest) {
-    const admin = await checkAdmin()
+    const admin = checkAdmin()
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const action = req.nextUrl.searchParams.get('action') || 'stats'
@@ -62,7 +61,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/admin
 export async function POST(req: NextRequest) {
-    const admin = await checkAdmin()
+    const admin = checkAdmin()
     if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const body = await req.json()

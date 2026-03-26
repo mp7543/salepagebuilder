@@ -1,5 +1,10 @@
-import NextAuth from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { NextResponse } from 'next/server'
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+// NextAuth route removed — no login required
+export async function GET() {
+    return NextResponse.redirect(new URL('/dashboard', 'http://localhost:3000'))
+}
+
+export async function POST() {
+    return NextResponse.redirect(new URL('/dashboard', 'http://localhost:3000'))
+}

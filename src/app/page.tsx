@@ -1,6 +1,5 @@
 'use client'
 
-import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { Check, Sparkles, Zap, Crown, ArrowRight, Star, Layout, Palette, Globe, Shield, Bolt, Users, ChevronRight, ChevronDown, Menu, X, Eye, HelpCircle, Building2 } from 'lucide-react'
@@ -152,7 +151,6 @@ function useScrollReveal() {
 /* ═══════ COMPONENT ═══════ */
 
 export default function LandingPage() {
-  const { data: session } = useSession()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTemplate, setActiveTemplate] = useState(0)
@@ -162,11 +160,7 @@ export default function LandingPage() {
   const toggleFaq = (i: number) => setOpenFaq(prev => prev === i ? null : i)
 
   const handleGetStarted = () => {
-    if (session) {
-      router.push('/dashboard')
-    } else {
-      signIn('google', { callbackUrl: '/dashboard' })
-    }
+    router.push('/dashboard')
   }
 
   return (
@@ -183,15 +177,9 @@ export default function LandingPage() {
             <a href="#features" className="hidden md:block text-sm text-[var(--muted)] hover:text-white transition-colors px-3 py-2">ฟีเจอร์</a>
             <a href="#templates" className="hidden md:block text-sm text-[var(--muted)] hover:text-white transition-colors px-3 py-2">เทมเพลท</a>
             <a href="#pricing" className="hidden md:block text-sm text-[var(--muted)] hover:text-white transition-colors px-3 py-2">Pricing</a>
-            {session ? (
-              <button onClick={() => router.push('/dashboard')} className="btn-primary px-4 sm:px-5 py-2 sm:py-2.5 text-sm flex items-center gap-1.5">
-                Dashboard <ChevronRight size={14} />
-              </button>
-            ) : (
-              <button onClick={() => signIn('google', { callbackUrl: '/dashboard' })} className="hidden sm:block btn-primary px-5 py-2.5 text-sm">
-                เริ่มต้นฟรี
-              </button>
-            )}
+            <button onClick={() => router.push('/dashboard')} className="btn-primary px-4 sm:px-5 py-2 sm:py-2.5 text-sm flex items-center gap-1.5">
+              Dashboard <ChevronRight size={14} />
+            </button>
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
@@ -230,7 +218,7 @@ export default function LandingPage() {
               <div className="pt-3">
                 <button onClick={handleGetStarted}
                   className="btn-primary w-full py-3.5 text-base flex items-center justify-center gap-2">
-                  {session ? 'ไปยัง Dashboard' : 'เริ่มสร้างฟรีเลย'} <ArrowRight size={16} />
+                  เริ่มสร้างฟรีเลย <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -690,7 +678,7 @@ export default function LandingPage() {
       <div className="sticky-cta-bar">
         <button onClick={handleGetStarted}
           className="btn-primary w-full py-3.5 text-base font-semibold flex items-center justify-center gap-2">
-          {session ? 'ไปยัง Dashboard' : 'เริ่มสร้างฟรีเลย'} <ArrowRight size={16} />
+          เริ่มสร้างฟรีเลย <ArrowRight size={16} />
         </button>
       </div>
 

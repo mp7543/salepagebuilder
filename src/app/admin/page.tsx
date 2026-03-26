@@ -1,6 +1,5 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useCallback } from 'react'
 import {
@@ -23,7 +22,6 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
 ]
 
 export default function AdminPage() {
-    const { data: session, status } = useSession()
     const router = useRouter()
     const [activeTab, setActiveTab] = useState<Tab>('overview')
     const [loading, setLoading] = useState(true)
@@ -41,10 +39,6 @@ export default function AdminPage() {
     const [settings, setSettings] = useState<any>({})
     const [searchQuery, setSearchQuery] = useState('')
     const [actionLoading, setActionLoading] = useState<string | null>(null)
-
-    useEffect(() => {
-        if (status === 'unauthenticated') router.push('/login')
-    }, [status, router])
 
     const fetchData = useCallback(async (tab: Tab) => {
         setLoading(true)
@@ -67,8 +61,8 @@ export default function AdminPage() {
     }, [])
 
     useEffect(() => {
-        if (session) fetchData(activeTab)
-    }, [session, activeTab, fetchData])
+        fetchData(activeTab)
+    }, [activeTab, fetchData])
 
     const adminAction = async (action: string, body: any = {}) => {
         setActionLoading(action)
@@ -85,11 +79,6 @@ export default function AdminPage() {
         setActionLoading(null)
     }
 
-    if (status === 'loading') return (
-        <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0f' }}>
-            <Loader2 className="animate-spin text-purple-400" size={32} />
-        </div>
-    )
 
     if (forbidden) return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#0a0a0f', color: 'white' }}>

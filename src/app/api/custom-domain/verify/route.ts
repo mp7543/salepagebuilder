@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getMockSession } from '@/lib/auth'
 import { findCustomDomainById, findCustomDomainsByUser, verifyCustomDomain } from '@/lib/db'
 import dns from 'dns/promises'
 
 const EXPECTED_HOST = process.env.NEXTAUTH_URL
     ? new URL(process.env.NEXTAUTH_URL).hostname
-    : 'localhost'
+    : process.env.RAILWAY_PUBLIC_DOMAIN || 'localhost'
 
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions)
-    if (!(session?.user as any)?.id) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const session = getMockSession()
 
     const { domainId } = await req.json()
     if (!domainId) {
@@ -26,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify user owns the page this domain is attached to
-    const userDomains = findCustomDomainsByUser((session!.user as any).id)
+    const userDomains = findCustomDomainsByUser(session.user.id)
     const owned = userDomains.find((d: any) => d.id === domainId)
     if (!owned) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
